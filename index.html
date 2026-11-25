@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TIS LitMaster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@500;700;800&family=Hind+Siliguri:wght@400;500;600&family=Lora:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+<style>
+/* VOICE: warm, encouraging tutor — a serious exam desk with a friendly face
+   IDEA: a study notebook + exam hall in one: chapters as tabs, the exam as a timed answer sheet
+   PICTURE: the teacher's animated profile card and the live exam card (ring timer) are the hero images
+   COLOUR and TYPE: TIS green (deep forest + leaf) with a gold accent; Anek Bangla headings, Hind Siliguri body, Lora for quotes
+   LAYOUT: brand bar → hero (profile + start panel) → tabs: Study / Exam / Results */
+:root{color-scheme:light dark;
+--bg:light-dark(#f4f8f3,#0c1611);--card:light-dark(#ffffff,#13221a);--ink:light-dark(#10241a,#e6f1ea);--mut:light-dark(#4f6b5c,#9db7a8);
+--line:light-dark(#dbe7de,#24392d);--g1:#0f3d2b;--g2:#1f7a44;--leaf:light-dark(#2e9d4f,#4cc06c);--gold:#f2b705;--bad:light-dark(#c62828,#ff7b72);--good:light-dark(#1b8a3c,#5fd37f);--soft:light-dark(#e7f3ea,#183024)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Hind Siliguri",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Anek Bangla","Hind Siliguri",sans-serif;line-height:1.15;text-wrap:balance;margin:0}
+button{font:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(4vw,14px)}
+/* top bar */
+.bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--g1) 94%,transparent);backdrop-filter:blur(8px);color:#fff}
+.bar .wrap{display:flex;align-items:center;gap:14px;min-height:64px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff}
+.brand svg{width:44px;height:44px;flex:none}
+.brand b{font:800 22px/1 "Anek Bangla",sans-serif;letter-spacing:.2px}.brand b span{color:var(--gold)}
+.brand small{display:block;font-size:12.5px;opacity:.8;margin-top:3px}
+nav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+nav button{background:transparent;border:1px solid #ffffff33;color:#fff;border-radius:999px;padding:8px 16px;min-height:44px;font-weight:600}
+nav button[aria-current=true]{background:var(--gold);color:#1a1300;border-color:var(--gold)}
+/* hero */
+.hero{background:radial-gradient(1200px 500px at 85% -10%,#2e9d4f55,transparent 60%),linear-gradient(160deg,var(--g1),#0a2a1d 70%);color:#fff;padding:clamp(26px,4vw,52px) 0}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:center}
+.prof{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:center}
+.ph{position:relative;width:clamp(150px,18vw,210px);aspect-ratio:1;animation:float 6s ease-in-out infinite}
+.ph::before{content:"";position:absolute;inset:-7px;border-radius:50%;background:conic-gradient(var(--gold),#4cc06c,#a7f3c0,var(--gold));animation:spin 7s linear infinite}
+.ph::after{content:"";position:absolute;inset:-18px;border-radius:50%;border:2px dashed #ffffff40;animation:spin 22s linear infinite reverse}
+.ph img{position:relative;width:100%;height:100%;object-fit:cover;border-radius:50%;border:5px solid var(--g1);display:block}
+.pname{font:800 clamp(28px,3.6vw,42px)/1.1 "Anek Bangla",sans-serif;background:linear-gradient(90deg,#fff 0%,#ffe17a 30%,#fff 60%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 5s linear infinite,rise .8s both}
+.pos{display:flex;align-items:center;gap:10px;margin:6px 0 14px;font:600 17px/1.2 "Lora",serif;font-style:italic;color:#ffe17a;animation:rise .8s .15s both}
+.pos i{height:2px;width:46px;background:#ffe17a;transform-origin:center;animation:draw 1.4s .4s both}
+.chan{font:700 15px/1.2 "Anek Bangla",sans-serif;color:#cfe9d8;margin-bottom:8px;animation:rise .8s .25s both}
+.links{display:grid;gap:7px}
+.links a{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;background:#ffffff12;border:1px solid #ffffff22;border-radius:12px;padding:6px 12px 6px 6px;min-height:44px;font-size:14px;transition:transform .25s,background .25s;animation:rise .7s both}
+.links a:hover{transform:translateX(6px);background:#ffffff24}
+.links a span{overflow-wrap:anywhere}
+.links svg{width:32px;height:32px;flex:none;border-radius:8px;animation:pulse 2.6s ease-in-out infinite}
+.links a:nth-child(1){animation-delay:.35s}.links a:nth-child(2){animation-delay:.5s}.links a:nth-child(3){animation-delay:.65s}.links a:nth-child(4){animation-delay:.8s}
+.links a:nth-child(2) svg{animation-delay:.6s}.links a:nth-child(3) svg{animation-delay:1.2s}.links a:nth-child(4) svg{animation-delay:1.8s}
+.start{background:#ffffff10;border:1px solid #ffffff26;border-radius:20px;padding:clamp(18px,2.6vw,28px)}
+.start h1{font-size:clamp(30px,3.6vw,46px);margin-bottom:10px}
+.start h1 span{color:var(--gold)}
+.start p{color:#cfe9d8;margin:0 0 16px;max-width:52ch}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.stats div{background:#00000026;border-radius:14px;padding:10px 12px}
+.stats b{display:block;font:800 clamp(22px,2.6vw,30px)/1 "Anek Bangla";color:var(--gold)}
+.stats small{font-size:13px;color:#cfe9d8}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 20px;border-radius:12px;border:0;font-weight:700;background:var(--gold);color:#1a1300;transition:transform .15s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px #0003}
+.btn.alt{background:transparent;color:inherit;border:1.5px solid currentColor}
+.btn.g{background:var(--g2);color:#fff}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+/* study */
+main{padding:28px 0 60px}
+.study{display:grid;grid-template-columns:270px minmax(0,1fr);gap:24px;align-items:start}
+.side{position:sticky;top:80px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:10px;max-height:calc(100vh - 100px);overflow:auto}
+.side button{display:grid;grid-template-columns:30px minmax(0,1fr);gap:8px;align-items:center;width:100%;text-align:left;background:transparent;border:0;border-radius:12px;padding:8px;color:var(--ink);min-height:44px}
+.side button i{font-style:normal;display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--soft);color:var(--leaf);font-weight:700;font-size:14px}
+.side button small{display:block;color:var(--mut);font-size:13px;line-height:1.3}
+.side button[aria-current=true]{background:var(--soft)}
+.side button[aria-current=true] i{background:var(--g2);color:#fff}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(18px,3vw,32px);animation:rise .4s both}
+.sechead{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-end;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:18px}
+.sechead h2{font-size:clamp(26px,3vw,36px)}
+.sechead p{margin:4px 0 0;color:var(--mut)}
+.yr{display:inline-block;background:var(--soft);color:var(--leaf);font-weight:700;border-radius:999px;padding:3px 12px;font-size:14px;margin-bottom:8px}
+.intro{display:grid;gap:10px;margin:0 0 22px;padding:0;list-style:none}
+.intro li{position:relative;padding-left:26px}
+.intro li::before{content:"";position:absolute;left:4px;top:.6em;width:10px;height:10px;border-radius:3px;background:var(--leaf);transform:rotate(45deg)}
+.search{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.search input{flex:1;min-width:200px;font:inherit;font-size:16px;padding:10px 14px;min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;font-weight:600;color:var(--mut);font-size:13.5px;border-bottom:2px solid var(--line);padding:8px 10px}
+td{border-bottom:1px solid var(--line);padding:10px;vertical-align:top}
+td:first-child{font-weight:600;white-space:normal;width:24%}
+td:last-child{color:var(--mut)}
+mark{background:#f2b70555;color:inherit;border-radius:3px}
+.quotes{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:22px}
+.quotes figure{margin:0;background:var(--soft);border-radius:14px;padding:14px 16px}
+.quotes blockquote{margin:0;font:italic 500 16px/1.5 "Lora",serif}
+.quotes figcaption{margin-top:6px;font-size:13.5px;color:var(--leaf);font-weight:600}
+.h3{font-size:20px;margin:26px 0 10px}
+.cta{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:linear-gradient(120deg,var(--g1),var(--g2));color:#fff;border-radius:16px;padding:16px 20px}
+/* exam setup */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(18px,3vw,32px)}
+.setup{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.field label{display:block;font-weight:600;margin-bottom:6px}
+.field select{width:100%;font:inherit;font-size:16px;min-height:46px;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.field small{color:var(--mut);font-size:13.5px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips button{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:6px 16px;min-height:44px;font-weight:600}
+.chips button[aria-pressed=true]{background:var(--g2);color:#fff;border-color:var(--g2)}
+/* exam */
+.exam{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px;align-items:start}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(18px,3vw,30px)}
+.qtop{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--mut);font-weight:600;margin-bottom:10px;flex-wrap:wrap}
+.prog{height:8px;background:var(--soft);border-radius:99px;overflow:hidden;margin-bottom:18px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--g2),var(--leaf));transition:width .3s}
+.qtext{font:700 clamp(19px,2.2vw,24px)/1.35 "Anek Bangla","Hind Siliguri",sans-serif;margin-bottom:18px}
+.opts{display:grid;gap:10px}
+.opt{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px;align-items:center;text-align:left;background:var(--bg);border:1.5px solid var(--line);color:var(--ink);border-radius:14px;padding:10px 14px;min-height:52px;font-size:16.5px;transition:border-color .15s,transform .15s}
+.opt:hover{border-color:var(--leaf);transform:translateX(3px)}
+.opt b{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--soft);color:var(--leaf)}
+.opt[aria-pressed=true]{border-color:var(--g2);background:var(--soft)}
+.opt[aria-pressed=true] b{background:var(--g2);color:#fff}
+.qnav{display:flex;justify-content:space-between;gap:10px;margin-top:20px;flex-wrap:wrap}
+.qnav .btn.alt{color:var(--ink)}
+.timer{position:sticky;top:80px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px}
+.ring{position:relative;width:150px;height:150px;margin:0 auto 10px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring div{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring b{font:800 30px/1 "Anek Bangla";font-variant-numeric:tabular-nums}
+.ring small{display:block;color:var(--mut);font-size:13px;margin-top:4px}
+.ring.low b{color:var(--bad);animation:blink 1s infinite}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:6px;margin:12px 0}
+.grid button{min-height:38px;border-radius:9px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-weight:600;font-size:14px}
+.grid button.a{background:var(--g2);color:#fff;border-color:var(--g2)}
+.grid button.f{box-shadow:inset 0 -4px 0 var(--gold)}
+.grid button.c{outline:2px solid var(--gold);outline-offset:1px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--mut)}
+/* results */
+.res{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:22px;align-items:start}
+.score{background:linear-gradient(160deg,var(--g1),var(--g2));color:#fff;border-radius:22px;padding:24px;text-align:center}
+.big{font:800 clamp(52px,7vw,76px)/1 "Anek Bangla";color:var(--gold);margin:6px 0;animation:pop .6s both}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px;text-align:left}
+.kv div{background:#ffffff14;border-radius:12px;padding:10px 12px}
+.kv b{display:block;font:700 22px/1.1 "Anek Bangla";font-variant-numeric:tabular-nums}
+.kv small{color:#cfe9d8;font-size:13px}
+.rev{display:grid;gap:12px}
+.rv{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--line);border-radius:14px;padding:14px 16px}
+.rv.ok{border-left-color:var(--good)}.rv.no{border-left-color:var(--bad)}.rv.sk{border-left-color:var(--gold)}
+.rv p{margin:0 0 6px;font-weight:600}
+.rv ul{margin:0;padding:0;list-style:none;display:grid;gap:4px;font-size:15px}
+.rv li.r{color:var(--good);font-weight:700}.rv li.w{color:var(--bad);text-decoration:line-through}
+.rv em{display:block;margin-top:6px;color:var(--mut);font-size:14px;font-style:normal}
+.filt{margin-bottom:12px}
+.hist{width:100%;font-size:15px}
+.hist td:first-child{width:auto}
+.empty{color:var(--mut);padding:20px 0}
+/* dialog */
+.dlg{position:fixed;inset:0;background:#0009;display:none;place-items:center;z-index:50;padding:16px}
+.dlg.on{display:grid}
+.dlg>div{background:var(--card);color:var(--ink);border-radius:18px;padding:24px;max-width:420px;width:100%;animation:pop .3s both}
+.dlg p{color:var(--mut)}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--g1);color:#fff;padding:10px 18px;border-radius:12px;z-index:60;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.on{opacity:1}
+footer{background:var(--g1);color:#cfe9d8;padding:22px 0;font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer a{color:var(--gold)}
+[hidden]{display:none!important}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{50%{transform:translateY(-8px)}}
+@keyframes shine{to{background-position:-220% 0}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+@keyframes draw{from{transform:scaleX(0)}}
+@keyframes pulse{50%{transform:scale(1.1)}}
+@keyframes pop{from{opacity:0;transform:scale(.85)}}
+@keyframes blink{50%{opacity:.4}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media(max-width:980px){.study,.exam,.res{grid-template-columns:minmax(0,1fr)}.side{position:static;max-height:none;display:flex;overflow-x:auto;gap:6px}.side button{width:auto;flex:none;max-width:230px}.timer{position:static;order:-1}.ring{width:110px;height:110px}.timer .tb{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center}}
+@media(max-width:820px){.hero .wrap{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.prof{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center}.pos{justify-content:center}.links a{text-align:left}.setup{grid-template-columns:minmax(0,1fr)}.brand small{display:none}nav{margin-left:0;width:100%;padding-bottom:8px}nav button{flex:1;padding:6px 8px}
+table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start;width:auto!important}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--mut);font-weight:500;font-size:13px}.stack td:empty{display:none}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<header class="bar"><div class="wrap">
+  <a class="brand" href="#study" aria-label="TIS LitMaster home">
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4cc06c"/><stop offset="1" stop-color="#1f7a44"/></linearGradient></defs>
+      <path d="M32 3 57 17v30L32 61 7 47V17z" fill="url(#lg)" stroke="#f2b705" stroke-width="2.5"/>
+      <path d="M15 24c6-3 12-3 17 1v24c-5-4-11-4-17-1z" fill="#fff"/>
+      <path d="M49 24c-6-3-12-3-17 1v24c5-4 11-4 17-1z" fill="#e7f3ea"/>
+      <path d="M19 30h9M19 35h9M19 40h7M36 30h9M36 35h9" stroke="#1f7a44" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M47 9c-6 4-11 11-13 19l2 1c3-7 8-13 14-17z" fill="#f2b705"/>
+      <path d="M34 28l-1 4 3-2" fill="#0f3d2b"/>
+    </svg>
+    <div><b>TIS <span>Lit</span>Master</b><small>English Literature · Study & Exam Hub</small></div>
+  </a>
+  <nav aria-label="Main">
+    <button data-view="study" aria-current="true">📖 পড়ি</button>
+    <button data-view="exam">📝 পরীক্ষা</button>
+    <button data-view="history">🏆 ফলাফল</button>
+  </nav>
+</div></header>
+
+<section class="hero" id="top"><div class="wrap">
+  <div class="prof">
+    <div class="ph"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBAUEBAYFBQUGBgYHCQ4JCQgICRINDQoOFRIWFhUSFBQXGiEcFxgfGRQUHScdHyIjJSUlFhwpLCgkKyEkJST/2wBDAQYGBgkICREJCREkGBQYJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCT/wAARCAFoAWgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3Bjzmo2PFOamGvlj6MaTUbVKaYRmgoatOVsGm8g0A81IbkmBIu1uhrkvFWlzWcRu7TPy8nFdYCc8VJPZLeWskUmMMMc1FR3i0NaO5xg8R2uv6Ctpd2489R8rAdCO4rmru0jjXgYqS9tW0e/lhGdgYlSOmKrzz+aM5Jr4+dOUZ7npwUUtCoRyMdRXqXh2TfpkO5snaK840+xe+uVjAO3PJrvLe0NvEiwsUKivcyuE0nLocuJadkbrdKbg1lx3t1AcSL5i+1XrbUIJRhjsb0avX5l1OWxPig0/APIOaay45qk7iG0jdKWjNAETjimVM2CKgYY5NJsCK6kOxYl+85xWpaW4toFQdcc+9Z+mxfablp2HyqcDNajn0q6a6kTfQRjUT+tPbpUbHAqmyRARUchpWaoy3NS2UMdqwvEel3OqwFLW+ktXxwyVtydM5qrMdhz61jMrl5lZnjutaX410eUtHezTxjowPNU7T4l6/pR8q6XzcHkPwa9gupAYmBAPHeuaGg6fqjSC6to25z0rlnU5WkzL6pK96crGXpnxX02/XyNSg8rfwdw4qlrvw/wBK19W1LQLtI7j720Hgmm618NLO4mEdhN5LHsTwKw7j4c+LtBkNzpt3uA5+R8Z/CueCg5XhLlY6jrcvLWhzLutx1h8QJtLil8O+KoDJGTsV2HSsq38Ntbar51u4lspDvjOeQPSq93qcuoRyWuuWHmXK/KJMcg1Jpbz2FkIt5I6gE16CUUtDy61RyVt/zL2p38KXPkMVZmG3bmuPtvD1wmqymRCIsll54q7faTfTXL3jsNvXg812HhPw/NdRh53LALnJ7CrjJrSL3OW1o2aObvpxplk0anDtxXKx2dxcaipJJTrXV+LLWG6lmS2bJiJ/SqWiwSG33uuG6dKIVOWLaIknFaluOdLBBI+MIOB71hJeS6zeSYYtITjb6U7X7tnkMC9B1xUWgudLd7kIC5HBbtTpUlGDm92QjsNE0K30608zUZF3dfmPSpbvXtOt4ybZfOK+h4rjrnXZNQmUTyM4B6Z4qxY2c0t4zQKfIYc5odN7y3NItdS1c+KZ751X7CjgHgAc1ftby3udPvvLRoZVj+eM8EH1qJofsIEkaqrr3NSWKvuk1GdVIk+U4HDCodrbGkGt0yb4c6pNdwXuk3q7w6koT3FFX9DuNNF7FPaqsTRthkJ5Iorwcxco13KmrJhZH0mTzS4pTjoKaelfRn0A1ulMxUh6UzHGKChhxSrTtnGap3OoBf3VuN8h4qJStuOKLTTxwDMhA9qiNxNeZ25jjH61BBZM58ydtzelXlTA9BWTi5fFsVoZV9o8N0m1owT61zw8NwDUPKK/Ljoa79Iw+MgVlzWo/tgDA+7moqKm7JoIyd9GZ9vpcdp8sSAVoQwBQN3NXGtwvIqJ1xXRF6WRDXVjSi44AqKW2jl6rg+oqYL3oI5p2uF7FMQ3EBzFJu9jU8eolTtnjK+9TAVHLJbmRYJHj8x87UJG4/QUuXsO/cnV0kGUYGgqapvDHCjSpKIlUZJY4A/Gs6XxXaaeGa/l8uFeszIQoHrnHT3oUnsxaGzuCnmq942UCIRufjFZ934isFhSaKdZkYZVkOQR+FQaXrsF5qIL4VR0z3pykl1Govc6m0gFrbonfHNOBwetAlWVA6nKnpUecmtk9NDGw9yOahYinE1G9S2NIaTTO+KU9KaRioGMk6EVja3qlppMBnvJhGoHetlq5HxF4Ih8R3HmX13MYh0iVsLmokEnJL3dzjNb+KSvmPTod3bea5Kfxj4hmJEUm1m/uKTXpE3hfwn4dj3XPl5H945Nc3qHjTSLd2TSdMSQjjeRgVlJd0cU3UX8SdjnLU+Lr6RXSS53noSMfzqS9uPHGnSx+bdzor8YJBBouPEXibUnb7Kvlxrz8i8L+NM0+51Odmub+5kn2E/Kx6GojdO7sZznG1lJk1jFJPeLFfkSPIeTjvRq+mzaJNukYtEwyp7Cug1C3hudDTV7MKksP+sFVtF1CDxNYy6ZqO0y4zG9Wmw5F8L3exVj0AatZQ31jdbsY8yPNbl5rEegeFbiSNR5xXYgHc1y1mLrQbme1SYld23A71R1bULrzTBeqVQ8oD0q1JpXOWq+Z6LYo+XOIo7uVl8uc/N6gmtdLSOxsnldvkRS2a5eG5vLu7MOxxboeB2Fa+s6ox0iO22nk4dvak4Wkk+pz1HzaI52+Q3VyrwDdvPPtTL9xaW7I33zwPetTSrb7BbG4nUEMcR1De2Csonm+8TkLW0aq5lHojNq70M7S7NXHmzfKta7+IPszLBbRfL61npbTXjLHDnHTiuosfCixQJJcYU9ctVzd3zMpK25nXMcl60LzTFYTjeo64qzqurw2trFY6YC1uCN+6rGo6hpWjrhkNw/T5elQaNcadqEct5LGEWPJKGsYxla72N466RVjIm07VDqv2mxX92qhs5oq/feI0tbN7iz/wBSzbcntRWqpe0SvC9tCHyrqfWw5BNNzTmyFJFRR7m6ig+iF70jyxwqWkIFV73UYrUbV+aTsBVOGznvJPNuT8vZKzlLW0Sku49ppdRcpCCkY6t61btrKO3XgZY9SalRFjUKi4ApQxHWqUerE5dh4A6HFSAZxUQYO30qeMClIEyxbxZIFQNa51ctxwnSr9mBuFVbqby9Z2jpsrlqr4X5mUZvnaXYZNGEbBqlIvzH0rnPiB4/j0CRLS0juLi6bAZbePe5Y42oueAxyMk9MjgkivOPEGkeIbiG61fXteaG5SPzodNhdpUgHZXbKqWPtnviuqnC++g+d2PW7vVLGwgnmuruGKOBC7kuMgAZri7j4lywwxXyafJcWMr4DpGVQL7SHhiO+Bj34rx7WruxmmTNvYKxG6Sa28z5v95WJAOfSqz+NJNKjlQnMDjBRRhSMdh/DXfDCXSZjLEWdj37T/iPpVzBHJcg2okbYm5wQW9Cf4T9ePevP/FPj6DTfFD3NtMlxJHOk8XP+rG3Y8RPpxnj1rxO48Y3IeVIJD5brhR2we1ZqXtzLJuVZpWIwCpAx7c1vDBJO7ZjLFXVkes3/wAR9WFu1ydUmkmwBFAxyo5J3c9+evX6YrHfXb7UlM9zrLG6mUjZFksfUMT049M1w1sL9bhZXtJG2nP7ydasQ2t9Nd7likQ9eoI/Q10KhGOxl7Zvc3NNg1GKTy7W+vYyGJX96wCHr0rrbHx5rtjC015bw3SRZLZUwtgDqGHGfYiuES7uLVtuoRkIekwyp+hP9DV2O5lmgItrkXNu4wybsEjuOKxrYSFX4ki6WIlT+Fn0D4F+J1nrMMNvPBNbvIu+Jt4lSQd8Ec5HcYyK9AWRZEDKQwIyCOhr5EM13bW0smnTiBzIsylRgxSKMBlx04GD617f8MfiWmraFaQauI4L1B5bsG+UtnAyO2eMdR24rkq4Z01eOx0063O7Pc9NFMagMTz2NKTXKbETCkxTnPFR5NSNFPVNSttMt2muZAiKM5JrzDXPiTdalM9rpEfyA48zHX6V3Ot+FI9fuM6hcOYF6RqcA/WsPUJPDPhCHbBBFJOOigZOaTOes6neyPPbjw7q2rt512XIJyXlOB+AqldHTNEbyi5uph/CnPNaGv8Aia/1ZmLy/ZLf+4vX8awoNUsrGYPDb/aJeuSM4qJq+553NBP3fvZM+tavdqIIIfskb8A7eSK3/CkSpO1hdRl5JFzlu5rNttWn1K7F1cQrHFF91R3rYvdTS01qyukQKrAA/Ss/RG1N3lzXukRaNcxDVpdGujthZyjKTWZ4v8PyeFdVWezm/cPyuDyKt/EPTZtI1aDVrZSYrkB9w7NW5Fbw+JtBS4lKuwTBJ7GnHa5bhe9PqtjJewguNHj1OKQCUDLg+tc/rltcar5N3cP8m4KMVc0pblrxtJkOIzkVJq9nJY2aW0pOUmG3nqKqLuYJc0b2K15pz6NbpInzQyDlsVz1sJNSvpkHNsOhrrtfu2v/ALNp9r8/y/OB2rBS2l0ed4gAUYYIxWbko3XUzqxSemxDbziRkhcBoYnxVXxEcXymMkQEdaJ1aJGkhzw2cUl9Kt5FFEQR3NXBe+pLY53oXdN1u102MJDAJGHJZh3rM1TXNS1GYzb2WJT9xelR3SGMLBAM+pFbOlaPLNAEZQqnkkit1JLVBotyjZSPcJvmhA47imXEE75WMCKNuuOM1o6je2+mkW0WHkPGR2NYmqy6ja3VuZZEaOQcFT0+tEad3dApSl6GvBocEemPaXIOyYZ3HsaKrWtzNLd+T9pEsYTIX0orN1qlNtJ7jduh9fv8g3E4A9ayrrUpJ3MFopJ6Fh2p0rXGpPgbo4R696uQ28Vum2MAep9aOZvY+mtYp2enLERLKd8nv2q92pSMUmDWkUktCG7grDOCKVvYdaQClOM1TYhFGCKsRmoO1TRHmsmWall96uY8f6jNomnajqsUbMbeDIx3PT+tdRYnmuc+J/iPSNF8JXsmoJ9oWSN18hTgvx3PYDI59x3rKcObl12ZyRnyVDwLRfF91pmualq99e22p6hboEs4GGIxIy7mdjnACgkDuTwK5fxB4gn1K6+03OqS3dxMPMuSE2qjf3Rk846dhWRqV1eXl6zmFEurqQySBVAC/QCmfZQY9irLOwP3VPH4mvdo4dJ8z3MalVvQpaleLuxZTySs5IAc5LD6CsS7vNSC4mUqp4w4IrrY7a7jh3RXEds4BysYDN9K5fVLmVZDHMJ2Ycl3OP5V2xOWVylFYyRozvG2VPQMOB7e1SNq8lnEEjs48nu3U/41oaF9nvJW+0yBVC4HVvoeP881NFp9vJcKolR16KM4z+dF9dRWujNj8S3scJYJCBkDHlj/ADirFr4luid8lqGwPvJFurV1DRbYYiKDeRkAryB/vD+tQ2unS2qHyVcJ38p1kH5YzTugsySPU476Mg39zbv/AM85LcAfmBVWfT9Rsj58MSzIeS0I2t+Q61pxQu20Msrj+9FkFf8Ax7+lXDeQRqIjczE9kkixk/UYwaAS7mXba0DEq4KTjkqTgsPdTVnSdVt5rlopBNH1DLFJtPPcAgj8CKytWX7XIPMGxSeGl5x+IqBZpInUjyjNGMqv94ex71LimrFKTR9R/CHxkNf0ibS7m6Fze6c2wSsNrTQn7rkeo+6fce9d/wDhXyP4A8ajw/r8dxOXjjkdWDKOQ4P8mUkH8+wr64V1kQOMYYZGK8fE0uSduh6FGpzRGOMGo2dY1LMcAck1K/NUNX099Rs3t0laHdwWXriuVm9zz3x38QxBI1hpsgMn8Tj+GvPQL/UnaSKKaeZv4iCa9esvhroli29ojM5OS0hySatapdaP4btCTFEjD7qgc1Lk+hwVMPOo+apKyPI/+EE1KaD7RqU4t4gMkHrVGX7PaRG206ANngyHv7+9dFqT6r4vuwiFktyeFHT8aj1S0t9LVbSJVaRR8zelRu+VnPKEUnKC07sowWqxaZJnJZBkmk1ZGudLs7tVO0NtJA6VpaUv23TL2MLlgtWfCtuutaHe6dtBdBuUH/PqKznpfyNqcOZJd1+J0E1rF4o8DCEgNJEvyn0IrgNA1SSxjn0zOGY4weoNdd4C1pX+1aW4KsvGD2NY/iHw0bLxTbXMKny7huR6GqjomjSpecY1I77Mt3Phz7Pc6ffKSrnG4+tZvxFCxi2ZeGzmvSJbQS2kaOuSuMVwHjSxlv8AU7S1RMqDlj6VaWhVWnywaXUqeDdMLRyahKvzkYXPYVB4ss/KQ3SD6iuvtbUWtmsKLjAwap6lpgubR1kxyOPrWVWGl+wnQ/d8p5tFcI9q8iRnzTxg1SvwUs180bbhvujFX9QhksySi8I3IqpqUv2oQTqMtH2FFJ+8mtjypRd7FbSn2WrSSpukBxzViXUryWMjzfLSoWnKhEddrMckYqC7ie+l2I3lxjrXQtZXZKikFpcwETtKdzgfLWbdTkjdIxwOgJrSNoLeMLBGzf7WM5qF/D800Zmc8j+Gtqbindky556RKmi3IOoRFVPXrRVwNbaXYMIyJJ36Y6rRSqU3VfNHYUW4qx9nsFX5VHApjYxUkowx4qM1mj6kTPNKTkUgxSimS0KBRjmjml6jBpiEPSljPNB4oT72azkWjY0774rxP40azbSa1ZQSQmZGneT7OOd0cUZZSR/d3kHnrj2r1jU9UfR9Ivb5AC1vA8oB7kKTXyV4x1CWOzigW5ee5idmmlEhPmFhzz1xjj0xiqw8PaTS7HJJcrcmc+dYTzSQAQhOWP8AEe4pqahcSybJG+/90BdiqPXisa2mhmnyYNjp6HOB6c1fEsmoArAo2r13JjH1r6JKxwOVx95evZqBDAeeBlvvH171zt5I7S75FCAnB54rrINOke2YiTDAfeKt+g6VyerHY3z7i/Qbu34GrSM5DLK6S2YqdxBOCc4ArcsNd0yAFFZkk7SOu5VPr61x+5n2qMnHQVYS2QbVZizEZKr/ACpuK6kxm0ej2otri2aZJl+c53xsMk+1NmtAIQhhEgb5g8f7uTPt2P5VzWjWWoXjrbW0KwI/8Cr19yTya37nQdU0y3ZlkMyIMshz168Vi5xi7NnVGnOSvYrDVbi2i/0e+ZyvaZeR7Edv5VkXXiOe4ci4iRG7OnGaL1f7ZInt1kjuV+Vg5wCfr3/nU3h/TYtXd7WQ7bhQSAR1x1Aq3JJXM1Ft2RFaTpM4hncqH567h+VQG3vLGX98PLRiQjsMrRqOmvY3flohYowIU9CK6G21CzvtO+yXLEsB91+3tmn0uiWnezMpoUvLb94pieMZEkfIH1Hp717v8DPH15qEkPhq8EjqlsWR3YtsZMAgE9VYEMB2OR0xXgVysthKqWx3xA8qeoHpn+ld18EfF2keGfFZl1a5a1inhMaCUErGzEd+wNc2Kp80L2NaE7SPqgg05emDSRukkayRuro4DKynIIPcGmPLt4FeKz0zO8Ratb6Np8l1KwG0HA9a8stbHUvGWp/bZd4tyeAegFeia14YPiC9iku5SbaPkRdifetW3sYLKERQRqqgY4FQ9DGdJ1JWexy17BaeFdEkkQASbcAnrmvNXF1NHJezAlZGJLGui+KOpvcajbaXASeQSoqPxVpzaT4Qtl6OSN1ZqSjq9znrrnbjHaKKngV/M1GaDgrIuKd4Wmk0Tx7Jp8vyxyMR+HUVkeBL4jX41yBx/Wuu8Y6LJD4t0fU4FwskgR8CuWdT940uqNcPFuhGa3TKV/pcmg/Egsg2294u4Y6ZzzXY6rpa6hHCQAXiYMDV7xRoi3yWV4igzQMDmpIwVUA10UtYnT7JRbS2uMKfuRxyBWNc2ETzmXb8471vlP3ZOKzXGWI962Q2l1MeZDHGx9KoNN58JU44rc1C32Wsjd8VxFlq0ckzw5AcHGDUy7GUpJOxj+IYI4pizD5JODWNp2jTXl0YLbD7AZMeo9K6nxFZG4sGBU7jypqn8NGD6yok+8FIwa4K9T2VOc10PLrRtM5LU4hPdxuvylflZamg0hrydIwdu44+tdn438KJZ6r9vhUiKccjsGp3g6wEytcNGMKcJn1rNZjD6uqsdrGLiupDY2yaEv2e7gSWIDJbHIq7qFppOsWh+ybFJGPlPNYnie7nvdTms432oCAxHWuVmu5dDvF+zTMSOSM8V2YeTqQT6sTXLHmWwzVPB19p1y00Y8yP9aK6vT/EtvqcXlSELNjlfeiun6xUWjRmox6H0RFqeH8q6GxwcA1cOGAI5FQXVtFcr8w+b1qkktzprBXBkh9fSlrHfY+o3NNRjtTu2abDPFOm6Ngf6U81adyH5jaXHFKBS0wG8ng09AAQKTFKo5FTJDuZ3jWNpfB+rqr7P9Eclj6AZP6Zr421nUZ9VjuL2WJo7i5nYqAcKqtz09f6V9O/GLxrHo3hO9s7eZFlnBtpCVycMvIHvg9frXzSis1nFuVCpLMMt6gf0ruwELXkcWIb2MvT/LiXZEsczYwRJjH4DvV1bnUY28qJY1X+6BR5iWit5IiVyPrioJbmfy2e7JY/wlDXrLU4i/Ims4Ui5gjibqZFGAPxrlfEMcEDjy7iOd25JT/63FOvrrziy+bKyDkIxyKzIkbzAo6E9qtESd9gtrN5+AcZOOtdV4S0C2ed5bo/u4uSexPYD3o0Tw3c6nOkFrE0j/xY6Ae5r17w58K4ktI5ZpnEytuUZ3Kp9cEdfeubEV1FWudmEwkpS5rEHhvwyY1N4Idok6MwxtFXNREV4/8AZtiFMx4eYjIjB6sfU+g/pXVP4SvL6IQ3Gs3bRD/llEqxg/UqM1q6T4MstMhCRRBVHvk15Tnd3PbVNJWPLD8LLWS/iubRmjQHEsbHO8Y6/XP86h1T4cjT55pYFlHmssgkThonHcV7R/ZltarnckY9WOKzbm7tAzIjide+3kVaqVDN0qXY8N1vRpYIfOlgAnUZ82MfK3uR2P6VxGpBbhd5IScfeAGMivo2/wBFt7mbdBMF3D/VP0b2xXmPj/wKEie7063eOdclowPlb6V1UMTZ8sjhxWEbXPE8qGpzW+Uky2Oh7n61pxG31KG2kljUgFiQrYYBf8msk2/mysjgpIOsbDBBq3bWk94DZ2yAvtyD0wM+td8rWPKje9j7K8Aa1p+s+E9Nk0tJ1tI4VijEw+fCjHP5GuiUV8//ALP/AIsuvDt5L4R1uOWNbqQNaSHlRIRyuffH5j3r6AAyc5rwa9Pkm0evTlzRuDniopTtQn2qXvUc6h1K561hI1R5RpukS+IPHN3eygmG2baufUVv/EezM3hqbaufLGR+FdLZ6Zb6WrrCoBdixPcmo9Usk1KxltX6SKVrjq7ip0LU5R6s8Z8EaTKviKznYERuufrXtWqaWNTjt9vWFww/CsSz8PRabBaKAN8JwGA6119oMqtc17y1NqFBUqfKF4uLTHpiswJxWxdrmA5rNCjGK76C90me42VQIiB6VmBcMSRzWsy/Ic1gavrFnpZ3XEoUVvYylJLVj9Qh8y1cdMivHbrNnqzyRgkKea726+IeieW6i4BGPWuFTWNPurmeQ52uxIJFZzjc461SDtZnT6bcpqlsYnGcCspLYeGtZguQNsTSjLexo0S8tre83RzAIR90mujv7ODVLN7d8EOPlPoa8DGp0KuvwSOSrvc1PGFut94elkj5KASKRVDw5Zrp+jK5BwELmtLwzKbrRHsrrma3BifPcdjWV4hubi10prGyXdcTnyk9h614dJyt9V/vb+RlPWzOKvbiCbUXaFGeaZzgDrWvD8P2vY/tV6EgRRuOetdZ4W8G2ejWy3FwBJc4y8jdj7UzxGW1P/RUlMdt/Ft/ir1p5zzVFTw+kV1/yIcNLs8pn8MqL03VkSfLbqvcUV1mp31hodu1pbbRKVPvRXvUa8q0edLQhJnvZODjrQRvUhhkHtQDzSEntXfY+juUpbF4GMts23uVqW11JZMRygq9WOo5NVpbKOfkcN2IrKUGtYlJ33LpPHFKv61mx3M9o3lzgso6NWhEySqGVsikpXG0SdaSTI5zilJxxTsKyEOBgjkGhsSPlz4u+KIdc1hrGK44tZ5d47OS2R+I5Feb3V9LNKVIAiHBB5Ga9m+Nvg+bw5cT6xbW9tLZXyrCH2DfE/b8wDzXj8mn/uysakDGS/cnvxXsYSUXBWPNrqXNqVJ2jm2hSqt3AAqvcNKpKvMGX+HGc/SppLXyVLAEHpnHWrWiwi8uWhK7mxkAc4rucklc51Fydjn5YSxyiszH2Ndd4K+Ht/rlyHk3wxeoFb+jeDZZrhLieILGDwCOp9TXpul32i+HIkjuL63RgM7S2TXHVxDekDvoYSN+aozV8I+BYNCtdkEQBIwSeSfcmuuj00IoAFc7beP9JxxcqF9SDUd58UND06MPc3UmGO1RHGzEn0rz5U5N7M9ZVIJaNJHYfuraIsxA4ya47xB8SrbSVdLSBrqUHHHCg1z+ufE6G8txHpiE+aBtaU4/SslrNoHZruQPOxJJI43egArenR5fjOedVSuoMfLqvi7xa/mCAwwfwj7in+ta9nZ3dqixS3FnGQctvmyT+VUL6w1G709haatHthiJhQ8bjnlQD/Os/T/DF7qmoQXM1rcxQRq3mB7lh5hxxxnIrsdNct72ORSkpJWbudPPFduAINSsWYnhVX+vNc1eRa1ezZN4yC3b5kYnBPpgdelauleF/seqoft9xcsDu8vIwB6ZroLbRm/teaGQBi8KTAn6lT/SuWpOMYux0qm5SV7o8i+IjakNLE8fh+zt7ctg3CZ3A+uP89K4PSpzYzyN5qmTAwfUf0r6rvtIt72wlsLuFXhlQowx29q+ZvEvhY+HPE8lhcvshL4WVhkbT0Jq8FWjOLgzkxuHdOSnHY6TwlGvirV7PTpEVZmlEkc0cg3RlTnIPbpX1NBtjRUAZcDo3WvDvA/h/T7G4sb2G2hiuYnQu0I+WVWGMj8efavcULvhmOVxla4681KVkdKpSjFOXUVztHWosE5JqTGTzyKR+uBXKxorSctTCnOcVKy4NKormqRujWDKN4PlTj+Kta0H7tfpWffoBED71oWvMan2rjW5u9ia6/49zWaMbfetS5/492rKyCcV6ND4TkqbjWbCHvWJqFlbXJxPCj/UVtSfKDxWRcEtKQK2MmjCvvCGjTxO7WcecdhXIzeDLRo3NqcEZKivT7iICykbH8NcZHf20CtvkUEE8E1M4tx03OWrTj0R5/cabPFO0d1C8QXpIveuj0TUzZrHaTSbgwzGxP6VsS38N8m4RLJGeCw5rA1/QpZLZbnTuXhO5UrxauIhiL0q2j6djz5OKuddbXUkcy3lsudw2Sp61rraQi4+1TqEVVyGbsa5Lw7rK3FgJmUrIp2zRnqprptUtkv7W2uZbsRWsfzMAcb/AEr5vEU3Cpyy06XFF3Qalqpkj/d/LEDhV7t71y+u66mk2hllYmRh8q981oXtyPKa6cbYFHyZ71zUViNVuzqN8C0af6tD0HvXVhKEI+9PZf1YynO5mwWM2p/6XcoIjJyCw5orUu9Vj89VCZjToB3or3qdSpJXUuVdiEfQPApuc9KRic0nOa9u59KIxIpUPGaafvU6kA4qsowRkVUeKazO+E5X+7Vv7tSAiokkyk2iO2vY7jgja/cGrDMEGScCq9xZJMu9DscdxXN694il0mFopuWHQ9zXPOfL8RrFc2xZ8U+Reae9vlHXIJjlUMvB9DXn3jL4WQ6/oovNLmgTUIxlYkQKjL3H1NVL3Xr69c/MQpPQVZ03Xb+xZMksgrKlj4QndFyw7krM+cNVjexmkik8wOh5UkjBHBBrV8BRONcN2Y5BbmJlLBeM+lek/EXwoNY1RfE1jpzzQn5ryGNN3zjo2B2bvWHYLNfW4uba2eGBt/kNIu3eEILAAewIr6aliIVaeh4/sJQqX7G7BZ3Wpl41neFHO0qpwcentViXwlb6Iu+5mt4gxJD8Fmwf7xq7qNz/AGVY7beMtO3A2jk59KLfR5NV0S3a4SWLVI5PNV2bMaD+6OeOxz606Uopa6HTVptvRXZnW+vRwuVs0EiREBjwT+NQeJrmHVtPlnmtgJIsOcLgla6Gz0l9KiuVN5Jc3F0FEpCg9BgcnOKy9asVt9EvRGvMgCnJzklgP5miVSKejNIUZOF5I6vTfD9lrfhSKG3so4neIFXCgEHGRWFZi7muZLK+gxd2hEcqdGyRww9QRyDXpfhRFWyj8tQAmF+gAx/Sqvizw4mqzx6jZ+XDqlscxu33ZF/uP7eh7VwU6jV77HdUpXs0ctb6XK8h2MYgDgbkJJrXTTZmULJcSn2VcCprbxXYQr5eoxyadcpxJHMhIB/2WAIYe/6Vb/4STS5iBbG5vH7LBA5z+JAH61UpSKgkP0rRI4GLhcH19avW0GfERAAYQ2RD+xZ8qP8Ax01UWXXb9fJgt49Mib/lpKRJLj2X7o/HP0ra061g0m1MKFmdzvklkbLyt6k9/wClZytbUbTb0K99b5Bx6V4p8XPDs0tzY6zDGZUifyrhBySvr/P9K9tuZlORntXOajbrLHKm0Nn5lz6iuejUdOfMia1JVIcrOP8AAVq50giMs6QhXjmKkdW+6QfY4/CvY7Pi0iHJ+XBzXP2GmgWltbxx+XCqhgD/ABHrXRWibbdB9cfnVSfM7ozrK0Eh/SmsKlxVa8vILJC00gXHY1DOa9hDVe5uUtl3ucCse78b6fanEgcDscHmoovFOj6pMg+0KpB4VjWMwjWhe19SHWfHOlWZFvM7LJkHBFalrrTatGsekzI2EyWPODXPeNfDFrrVmbmMKJ1HyMveuE8NarqvgzVwJUdYyfnQ9CPUVwwlFt23FWrVKU0pr3X1OovfibrWk6q2nanZqFRsFl7j1Fa02oalfaVLq1jKAqjcE9aseMNEsvF+gDVbEIbiNd6sOv0riPAPiKS0vG026JMEp24b+E+ldVJyejOSpOUanJJ6PZm34T8ezandtZ32Ax+6ab4s1a40gvNGzAS8Jjsaw9e0J9G1x5rcYiY+ahHatLXWXXPDkd0pDPGcmrjOTTT3Ri5y5HF7otaFq+qa/oEpMqL5YKse5rzHUtQktb6aJyzjkHnFdr4N1ddJS7tvKeUyDKqPWuD8RyvPq888kRiLHlacGpxVzixNZ+xjJPUveFdantroxx5aMnlK7G/eTC3Vi2WXlo/X2rzew1iK2uMQxkHua1LbxW9tfAscxMcEf1rjxmC55KcFr18zOdSKSXVnZ6S1pqUxvLVdkh+WeHH9K6k2lvNootnBdVfIWuW0+GJZxe2+A0oBLL0auo0m6k2zR7NzMvy4r5nGXveL2Lp9jndZZtQuEskP7qPG7HSs2/uvLjZE4iQY+prWvYDp0WzO65nbJ9qxb5AJUt+oX5m9zXZh7Oy6L+mYy0ZiX16ljZmdlJZugNFY3izUhJdC0iQkKKK+mw2Gi6alNbjR9Z8+tNLGnlc00rxjFdJ9IMzzThk80BaUCkOwcnrT0GSKaWCjJOAO5qI6hEp2qd59qlySKSNEDK15p4rR73V5EblV6Cu4aW8nyqny19e9YOqaT5M5mJLbvvE15mYKUqd47HRQsnZnGHSPLfO3ih4AnUZrqJoUER4GTWHcwkNXg8zWh2It+FrlbSeUSf6orlq5nxVp4ht7ZrTEEUU4KKR8q5b/AOvzXU6Rpj7Wll4DdFP86wPiNY6jeaU9jo8Xm3bxtIEHYKMk19XlfMqcec5qijqyJrGG9aK4ijw44KnqjDgrn2NX7bSDIS0jPtPbdxTfDKvfWcGo2sypJNEjSRyJuRjjuMghh0yD9c4FbvkanKpVZrOInjckLMf1OK7pTvpcdOCtexQewUp5SRqidzXO688N3LaaXYhZlWZZJpF5VdpyFz3JOM+gBzXWP4dM0e3Ubqa4XrsZtqH/AICuB+eai06LTLf7RJMIognyx9AAo9PxqVOxpKLeh1Xhu1FrYJHtJYYyT3rS1C3iKBmxG3uK4a38eWUU7QLORj2OPzxT9T8UNdWyrZyK0rHAL8hfcimndWsRKOt7nR3mlabNbGS42tIBkOOCv0Nc/ZC6Qbo+QCcZH3uawLMefeq13f3l2wwxycIcjIAUcYrpn1eytodyfMFUMcDhAeB/KqcXYqM1HqWItSm6SoyEHuOtEl/uPX8BWBeePNKtnEVy3U43LzitqyW31CFLm1lWWN+QRWU4yW441IS0Q1zLLzng0GEkAtyavPHtyoxxUN0PKU45PWsCmR6Br0mtXN9pUFs0baY6RPNJwp3LkFfXiuiRZ4gEBXAGBWL4T1DSDNfWlq6LfeYJbpCfmJwAD9MACukVdwyRWjjfY82dRvQr4nP8VYPiPw7Nq8WVmdJF5Uj1rV1jVotMgP8AFIeijrXGX3ja9dWjUxwknGW7VlNLZswqVYrSRnyanHZXA0vXLVQBwsoHBqtq/gG11CP7To92Aw+YLuqtreg65rIW63i4TGQVHNc9bXmu+HLj5xKUHUMDiuScakdabMPaUnpVjp3LMfiTWPD0wsbktMiHkN1x7V1mqa14b8S6OiyP5N6i5X5eQa49tSPifUES5VLUHjzKfLotxp2oZtpI5yuCrY4aoUYynzSVpE+2nGDUXzQ8yTwx40utBu3t3YyWDnDqe3vSeJjp8d2uoaTLlZSGYD+Fqm8QRyaxYxF7RLWZDhiAPmrP0hf7ItLmyvIllWZSYy4wRXZGWhyym/4d7robF14303UNFjhuH2XkYxmqnhHUEkW80uZsiQFkrI8P2BtruWa5tVurd1KlcZxWbG95o+qi/t42EasQqt6Z6UcyvYj28rqUvmdFocxs/EUKNwpYoazviJYCDWHZB+7fms/U9ZuZpWuSnkzA7hjtTNR8QPrVgHuFPnRjBb1qYRcUc1WcXSlDzuLrdtpltp0ElqgMzqNxFcyT84XPzMcAV0l7YwTaZavDkyOMEDmslbZInDSICVbg1uppbmVZN1l6HceDpzb2DWlw+bgfMin+7XU6RqbW95HuXejHbkfwmvMdOt9W1TWI7uyYhYMBj6j0ru7a5S1YXCYfBAlT0PrXzeYYePM3e7f4GsJdUamqQsNQnuZlwMfIK5HUbnybe4u24ABINdvrQ8+xS9XBRl2jFcZrFibqya23YViN30rlwEk7c3oOa1OM0UPqc3214hhTuLN0oqzq13hBZ2O2OKMYIHeivqOWVT3k7LsCR9ZMQBUR5FRz3sMQ+Zsn0FU/tV3cnEMZVfU1u5paH0iiXJJkhGXYCq7X7PxAhJ9cU+HTlyGnYu1XPKRFxGoUUWk/Id0iglnLO2bhzj0FXorSKHBRBn1NPVQBSgjpRyJagpNjyMiqt1a/aF2kVaDY4qVFDdqlrSzC9tTlb3R2WZIlb71Q3OgpaKGdvMkb7i/1rp76BRdxuxAVBkmqcm1mM79W4QHstcdHB0ZScuXqdCqSdrGN9nNta7yCWUZbApnguAX015rUikq5NvBnuoPzH8Tx+FXdbk/4l7xW4LTy4RQvOM8ZPtWhavp2mWkNtA4WKJQihVNeq4pKyIqSdrI4O0sf+Eev72ykdSnnPJFgYARzuA/DJFaiahHwAfoM1e8WwWmp6bLc2jg3VuA23GCy9+K4e0lMrq4bBrBrU6aM7xSZ1s9x9oXA71jajBYwkLdMhZgcK3fHNSpcNbxCVskCvLZ/EM/iLXrjULiVl02ybBVeshI+6oHU1pSpuV32CvWULeZtSLd6prcUWnQeTZIMvMxwg9c11Ih09QIWvFnOMsI0Iz7A1yGn6lrWs26S2lslvAp2qk7bNv1HWuhsfDerXKCS6uoQx7xNwB/WutQ7k01fUuza1ZaarbEhhHl7eQXbbVb7XqtzaTXlhHHFGyFM3EYVWBOfu9TV+LRdN0+U3M5R5gNuQO2eladnby61MrmPy7deApGM05cqV2VKFjz6TwPrPiKSWbUvsiq7fJ5MG1mH94nPBrtPBfh2bwfYSW8l084Y5Afnb+NdksEcKhR1rKvlAbr3rlq1XJW6GcKUU7rcckvmEk96o314qE5IwKla5SJM8ZFc+JzquoNGoIiiOXP9K50uptJ2Jvh1YWNjrPiDWrpFivbi5KeaXBVocArtPb3966q88a6RbxvsuUd17A1ymn/De51BJLi5vpYbdyWSKM4GKxNY8LjQpN0Ll4icEnrTnU6s8CpOrFu0ToLPxRpd3etcXs2WzgKfSsbxsNE1SI3Gn3GyUdQOM1e07wBb3totxb3p3tyQea47xPHqfhW78qaCOaEnhqnlT3Zz1JVVG8loTeGPiBdeHz5FxvmgBxgjpXYXfjDStc08+VbxvK3GwrzmuEtZLLVbZpZEETgcDFWJIItHtY72BlMmc4rJxj0FDEVUrdC41rZ2t2I5YhE0jAbT2zXQ+JdLsdI8Ly3ELbLgAFHrhNfvp763h1KSUGQsGIHarF94rPiK1tLGPLbcBh6msKlOc6kbbdTalOlCE779DX8BSR63q5h1GYsyIGVD3qz8UFhma1sraJUmRtxdeNq1yuLrwh4it7q5BTC7sDuprTW5l8Xay3lEnz+AR2FdUEpXaMfav2fs7e9c2fh7dWrxzWUiqZlOct3FVvHy6aCkcICzqckLU2iadb6DdSwXBIuUO0N6itBtKiuL5ppoFkGOGNZOXdF3bp+ztqeWaTaTa3PcRhCzD1qxqkAGni2jtdk8Qw5A5NdOtgND1ySe3j2RNnK1yuvy6hBqst7bDKk8r2ar1k9GcU6a5Gr6l3wXaQrZ3VxeSDdGv7tWrmfNuLu4lihTeQxbGK6DKanarMoeByMFOgJrDexutDu5Lh3wjLxzU0pJylzb9jBvVLoeg+BI1h0UOybJHY7s1Q0+9i/tq9aCYOA5WSI/zrR0cPHoccjfKGj3ZrkItORdTW+sLkecX+dM5DCvHpU41KlVye4o6bHqOmgX9sbRQRGvzgduK5jxNHJBps4j4lO7bitbSri4iuQAxVZF2svpVPxDbOokTduEcRP1rz6HuVkjVu6PK/D2lS3dyXu5WLHkrnpRV7TGnsdOm1CZcSMxCj2or6utGrVm3B6IhH1ZBp8MfLDefU1aDKowAAKZ2pvOcVuklsfTslLDFMDH14pM8UZHSqFYeCaUU0HinDJoEiZelMmuDGdiMFYDJPoKeh4xWVcSeddS7ScE7R+FQzWEU3qWpopZvneVjn1OM1GRAGUNGZGHQbs0+Fmlnww4UdKtPawy/eXHvWlOK6GjdtCLcQPksz+lV5L64RfmspMewq61uF4Erg+m41WkiuojujuGYf3X5Fa2Yk7mTLLHdOJFiHmof9W4xvHcfiK4jxFpo0W+MkQb7JcZeFvT/Z+o6V3t9L5mY2RFuAN6MvfHaqN1Z2uu2zW118sNyQUcdYZexH16GpaLba1RxVlqYZXt7jbtcEZz+tUvDngq00oOnmLOruXJPv0/H/Cq+uabeeGrxrPUFOCf3bj7rD1BpLHVpLKZGEmU7/SlZpaFqUZWbOpm8MwlMwFkz3Wqi6RcWqlftk7DPQCtixvkvY1ZGGD6VrCPCZPp1qVUktLm19NDmLSybAf7NuO7rKT09a6ywJjjUkLnHRRwKrtFEijLgsCCee1PGp2kEfzSDr2Iqm3Izb7mig3guTxXJeKNS+zzxokwRy3C/wB72rT1Lxdp1nbE+YF9PevD/F3jOTVvEEa2pMhhyo287mzx+Qq6dFyOetXUFod5qviBhIlrbjdI5wAO1dB4esBb2wBXLt8zt6muX8JeH5kxe3p33LnueEHpXoEEYhjAA7Vz1Wl7qNoXerIbzx3pnh2zjs7mQmdRygGTjPFcN4h8dtqckZs7Iqic5k4z+FZPxa1y18NeINKutRs5JrC7RopHiOHRlPbPB4b9K6fRJ/h9f6OmoW99HcxNwQ5w6H0ZT0NN05cinJaHiYl1XUlFNJI5EeJdXt5TJb3PkA/wL0qndXN5r0227uXlJ7mrniZtM1K+U6PGUReCR3p2mq0HyOm5uxHJNZ6202POm3flcrlWz04QM0KPlgM1DPqSPby2sqncOAcVD9quo/EEkgD+TjaRipdbRYbE3G37zdcVPLfUlT5VZFREaawaM8jsDU/gqyD+JLSFl+QtmtGyWxl0BbmOZfNUYZCe9Z2napHoniGxuZSFiDfMfSsqalaR0yUVOm35Ha/GbSFNtaX0CElf3bEelVfhHprLJPeSAHb8q+1aXxK123v9AtvsUiTJK4JKnpXNeEPEdzoazwJbmXzTlPY0qL5adup0YiUI4vmex0fxEtTBPFqURx/C+KbYeKbW10AXUzbpQMY7k1k+I7i/v4Fk1CeOOEHOwHvVHTLawuw0YuVATkg1onpYxlXtVcoLcqavqOtalGdR8vyos4VR1xVS71gW1hHK8LTkfeGOldV/Zts8LGK8EqgfdB4qjZaho8Ykiu0aLBwSy8VNle5zzve81uUrJbbXtP32bbWHboVNVdS0eXVdPewvj5U6/ckHGRXTQxaRf27f2eyxspyGjGMmrB0mW6t1FyyBgPlfPJqH8V9mYNGRrNyNJ8FFSdzJGIwVrzfwNDPf+KFEbyeXGNzc8V6rc6PY3mmzWF5dsqsevpVDw/4QtvDd1NdWEy3KTDB56Vhh4ujQqxteUr2JcXuie9v2g1AIG5AzWnd2n22ynu1fcJItvHauB8XTalZeI4NQjjc2gG2UD0zXd6FJFJpbJHLuSQb1Ga8rFYeVGnCot2OPY8y8Y3o0e2hs9ucjPSiqfxJtp7jxZFarxFsBJ9BmivrMEqSoRlPd6hqfXnQU09Kjt7yO5GPut6GpWB/CoR9O9BKKQ8CkXpQA6pFbC1EelPSmIJZjHE7A9ASKpWkZUbz17VNfNwsY7nJ+gpiHPyrnFZvc3pL3blq3IU4HLdSatY+Us7hFAyS3SiytVQZI+Y068VVjfIBBGCCOorqp09LkSld2Rzet30kYEVs++fcGhCt1Ofu/Q1Tvde1Kxg82bTZ0AZVJJG3JOOuelc3p+vLpPji805sGzlkCxM3JgYgcA/3c8flXS+IPEOm2FlNBdETGRSuwHH45od72NW3eyRekAmRLtfvoN3/1qoXjFTOE/wBVJH5i+xqh4S1O4vbaRpkHkc7GLcsPcVJcXC3EEMKkhZC8Wf8AZOaEjWxT1LxhpEujeZ4it4WsY4wZJZDllOOo9/pXkOieIrXxVPqkui28yWtpIPLjmcGRoznDfp0rnPjZ4hb+0V8N25dLayOHH99+xPsBWb8FtT+yeK3tGPyXtu0eP9ofMP5GuxYW1Fze55lTFR+sKnDb9T0LQPHK6HemC9Yi2J++38B9DXY3XxLsDbBbeZHJGcE8Eelcz4i8K2t8jlogd38Q6ivPrj4eX8cx+yXxEWc4fORWFNUp6t2ZvOVeGkVdHqEvxJtTARLMImGc85/yK4LVfiZLbT/uJDJ9DkdaqWnw480qbq8nkx94KMA11mk+BNNiVQLKKQj+KRdxFa81GG2ply16m+hxT694i8YyLY2Eb7ejOegyeTn8a9E8A+A00pN8+ZrjOXlI7+1dVo/hmC2AKRIp9FGK6a2tY4V2hQPSsK2K5lyxVkbUcIoPnm7sSztRGFIHToK0tuFwetJDFtOf1p71wyOw8f8A2iLD7Z4RiulX5rK5Vyf9lgVP8xXgnh7V59NvkKNlCRlT0NfWHjLSoNa0i5064GY7lGjJ9D2P4GvkTUdPuNG1OexuV2zQSFG/A9a9nLZxnSdNnhZpStNT6M+kNC1Dw9c6Gk8Z824mXHl9429KSPz9KuoLmaIFG6A15f8AD7V1sLlTcN+6cbWJ/hPY16vquo3t9p8Ja0223GJvWvOxlB0Z2WzOBNNbWsVbrVJJYLlV0/MUj584L0/GmG609NDnjvIxIcfLntV/S7PWtU0ySG3kgjsl6lupNYF1p895I2nwoHdwRnOAMd65IWSaCfNeL7mFp9m8t0UhBKE5A9abrg86RYyvKnafatV9BvNH2v8AaU3qPur2qrbbZZma4YEFsk+tT7RJXRHs2nqJaWn9lRrLNK0iHlIyeBTbjW7qV1Nqgj2+lWL1nvbiOKJD5ad/atWw0a3aMbSC5PQdaiLu7siTuzEtoL7U7yN9QaRoFOSMnBrVn0H7TKzxl4UIxgHFXDdyKWtILYpInBZxUtwL68gWFwAo67e9aXG5NqzY7SdPtdLgIM4YAcgHJNXIJ9MvFaFtPnA/vMvBqG00a5giMiiGPPc80t7dXOnaZK7/AL5wDggUpW3Id2RX95ZeHrB7iKEkA8qOwqtqTSatZRXGn3bhmG6N1PQ+hp0E1tr/AIeWR1zvXaw96xfC9y+gX8ljI5eEt8me1Ky67golnSNee6ZtO1wLFcrwJematlbrSmaa1YsnXjoayfHVmJ2F9EoDAclfSq/hXXJH22d05bP3CacqanG4nJ9DRfxbaarcfYLtRFJIMDI4NXdNE2iXKKQXt+nHauc8c+EpJ1h1SzYxiNv3m3t71a8K+NILicaRcFZJQuFdu/tTrYWNSlZa9/Izbd7orfFCaG2v7e6gGXuE28UVreJ9BivIEu2yRCSQOwopYKtCnRVNq7WhV7n0Bc2OW8yA7HHOPWi3vyCIrgbX9at555qC5tUuV54PY10NWd0fUJ33LB5FN21QR5bA7ZCXQ9D6VfjdJl3IcimmFhwXinr0xTduKHcRRPIcnaM4Hf2piKbf6TdMF5CfLWhBEAQeCRUGmWhihBcfOeT9anLeWcmiEb6nS3pZF1Ds5qreS/umYkD61H9p3/KP0qhrFx+48sH5nO2uxP3TOMNTy2JI7jxDdyvGWEkzEfnxS6/E11I0L5cKOM+ldSNJjgfeMdc5xXD+MfFOleH9V2XzzOCgzFbgF29sngZ9aIpvZG06kYR5pHTeGLyL+xpLZZVWSJSpJPTHek1u5g0fwpPezs3m2dvugw2MykgDPqOa8j8S/Ga+ntBa6LpVlpdqp4+QSSN7lj3/AArBfx5rXifT0tNRkjMSNkbF278DvW0MLN6y0OOpmVNxajucf4w1e617W59RvHDzyn5mAx04H8qb4LvG07xXpl0M4SdQfoeD+hqpqY/fHPrWvpemmOa3Odzn5s+lehUajCx41JSlU5j6N3LcID1U1Un01DllHPpVTw1dmezj3nnAroUh80AetfN7M+qTTVzAjtvLlwRt9eK3dO8mNhgDJpz2jRkjbkVNBaRkD5QCPSncaRqRTqOB1PYVft42cgvwvp3NUraFQAcc1oQcHmobGy5GMD2qtcybZAg5qxuxH9KobvMnqWJFLXIwtmZSPuc187/FLQEn1Z9QQYLDLH1xX0nqsZezkXHUEV4B8Qr1YbRo2IMzuYwvfA6mu3A3U1ynDjrOm+Y4fSj5fHGAa6O98aeIbXTo7SC986xjwPKZAdnvnrXO2C43Z6Vd6ZGMqwwa9+dOMviVz51M6vwv8TPsMTQXts0kbZyI3281btvGWn/b/tG6eBe/GePwrzdo2ilKfL7H1qyzEgL0auWeX0ZNu1rj5np5Hs0Xi7Q7lRaab5U0svBeXg5/GkuvCcVjb/arudVaQ5VEPU141GFDZZzxz1q3/ad0FAS+nG3oA54rz6uSreEjV1ub4kepwWEkUbqkfLD72OlS6Z4fntpjcyzkHt2xXAaP451PTZIy141wgPzRSnKmtq/8YnWpFb7R9khIAKg5x+VcdTLatLbVeRyyj1OnudVsrCdo1Tz5zyT61Ve512/YG3RbeI+o6CqttqGg2turi6inmx3PJ/OtTRtbudScGIQLFnAUMCfyrndOcfiQkyxa2ws0aeW6klIXncePyqFL+HVdImkRgxVipFS6ldRyvIqqpAG1gPWsjwyqLFcwJjKk8Vk2JvS4vhmaK1lnsGIIJJArG8W2E9i63luCw3YOOoouI2t9aiuYiUIbketdLrKiO3SZwGjkXr2z2q4JLXdkOWtzM0OUeINHUMcyD5XU+tcnPYXWh668coIjALRsK3tAvFt9UO2JkSU4YAcZ9aZ4wik+0kMd2z7p9q1jNW9RXtsafhHXh4hsbqxvAA2Cn1FcofDdl4dvLieRiZI2LIQeahs9SXSzLJbt86jJx1qfxBcpquix38Ttvk+VhVvmb5FomC3OvtNdt9Y8OXCxsN5jx9aK4Xw5I1nEsBbG7g0VyLCOlKSi9LmysfXp6U0UvU0oFdtz6MYyhlwwyDVVoHtm3wZ91NXTRtzScbjuRW16kvyv8r+hpwkMkpAwY1PJ9TVe4hillVcYYEEkGtBYY4IQBSTb0NowS1ZIk+ByBUFxNuboKjeQjkVn3V1IuQuCRzz3rWLsWo6l4uiKTjB9RWHczma+R2b5Vyee1Zl34xhAZEYmQZHl968+174sadprysswuZxkCKE5GfQnoK3gpT0ihTqRpq8mdl418V2PhnTJLueQHaMKgPLt2Ar5k1LW7vVb+e+u33yzOWb29APYVZ8ReK77xPem7vpGwCQkQ+7GPb/Gshph6Z9sV61Ch7Na7nhYvFOq7LYS8kJTI5wM4FWbR/s0OCcNgDgfnVeIgttYA561KT61u0ciZTv03SNxxXR+Fliv5I1Eg82KMgp3PuKwJ1LNn2plrLLaTpPA7RyIcqwrOpS542NKNXklc908NxvBEqE111pcBep6GuM8B6vB4i04SIQtzEAs0f8AdPqB6Gu5S03wdPmx2r5+rFxk09z6WjNSinHY04UWZMjBBpv2UxHheKr6XcNHII3zgV0cdusqZNYG9yhb5x93FW4xk082gFSIqoelFguLJwh+lVLWPMhc9Ku3AAhyOpplpAfL5FCQmyC9w8LCvlnxzfJf+Kb8QtuihlMantkdf1r6F+JPiQeEvDF1fDBuGHlW6/3pDwPy5P4V8u24cyM0jAknJJ7mvXy2k7uZ4+ZVdqZatRgt9BVlfmXmqS3dtHK0RmRZBgYPersWcAg5HtzXrHkEcsO4j1HQ1BIcnHp0NXiB360y4RcFwB7/AONFwM2RyMgsfy60B3lwhf5R1wMVK5UjpUNuvUigCZ3wuF+XFS2sokUqTg9iKglPDGmWkm1tp70WA0RPLECoKsPcUR3cxn3wx+Ww5yGxUR5FNlmW3iPvSauBr2viTULKQhLospILKeQfzrb8P+K7aw1X7VdKTFJxJtHTPfFcNa5clj35qxt/eqc5C881hUwlKerRNkz1DxHFa3ULXWnTpMpO9XjPbuPrTdOvJdW0GawkP72H5lJ61wmkeIZNPuCEUvA/yyKeh9xWxpmsGz1HKszK459CK8HFYSVGemqZjKNti0Zb5CDFtVQOpFdDp5i1iyErlJZ4OHUdxXIa7510SLaVlUnO3NWPDuof2fOYwfK+Xkk/erjjTSjclaq5cHhy31yab7FEYHbIcgcUyx8E6lZWk9pcoDAx+Vx2966/wpNDDatLtyJWLMaoat4vka9SGzX92rc+9cccTN3px6FxsznLXwolm6ySSStg9qK9HBWeyW4SJQ5XO3FFRLEVG78wnc9d4xSHpRjimlua9ix9OKM55pTxyegprOFGSQBWfqGpLtEMWd0h259BSckhxjd2QWLGeWS4OcMxwPar+ST1NQ2ke1EQAcCrW3B6VEe52S00I2Hy471z3im7EFoLdG2zS9GHUCulfA5I4ry34jeJU0iDUNTJB+zoI4VP8Uh4A/P+VdEE5OyM5TUU2zy74jeMZY7l9E0+QxiMbbmZT8zseq59PWvOWI9eKSeaSaV5pZC8kjF3Y9yeSaj3DIr6ClSVOPKj5ytVlUlzMZKecUiMG6inyKGAIqHOK1sYlhFxll+lKDluuaSMHygD35pcAc56VIxX6VEEJbA71Bc6pHESsQ3t69hVW31GVbgPKxZehHoKpCOl0LW7zw3qUV/YvtkT7yn7si91Psa+h/CPjvw/4jtoTDeQw3TqN1rK4WRG7jnr9RXzaVEgypBBHBpXi2bWxyDwR1rlxGFjW30Z14bFzoabo+s7qxDOGjGGrW0zeYgrDkV81eD/AIta/wCGJo4pZjqNipw1vcHJA/2W6g/mPavf/B/xE8NeL41Wxu1gvcc2k5Cyf8B7N+FeRWwdSnq9Ue1RxlOrotGdP9nzzxVWeMx1e3Y71WmwSMnj1rksdRFJGWC+neuF+IXxUs/CUTWGmmK71Yj7mcpB7vjv/s/nVP4s/FEeF4G0bSnVtWmT5nHP2VT3/wB49h261853l9JbBriVjK7Hcd7EliepJr0sHg+f357Hm43GqHuQ3N3V/EWq+I7p7vV72W6mJONxwqD0VegFZU1xBZI0sjgZ52Dq1Y/9r3dwTtIRT+P61XcF2y7En1r2oxSVkeHKbk7srXM7XM8kr8FznHpU9pql1YH91Jlf7rcinCNaY8IPQU7EG7b+KLaZQLmNon9V5FaKX1pMvyXEbBuOuK4wwMOccVb08MG27Sc9sUrFJm5dRmKXYrBx1BHcUKPKXHelt4QqZYYPpRISzcU7DI5TlPrVeMlZAandSR6YqPGGoEy9vAAqtenc8cffqacj7nAqGU776TAztwooAtLiKDOKR5PLhJz8zdKJMOQvYdqiuTukVR0ApgS2oIWtSC5dIsIBvA4JrNt+mPSrMbYNZVaSnHlYNXOgt1muII2zsZx1NJeWcgQA4lbuVNUZNUe3sSAu8qOvpWVZaheRvuWRgWPRq+dlg6kJO+hEIqOjPU31a007w/ZWcDj7XImG/wBmuZ/tG1spvK+V3JyTnpWHLqs1vLEt6g+fo3pS3mnWtrKZ9zl5OetcVPBxhfme4KNtj2DQrkXmmRlDuUjGaKp/DKVZ9C2YyYnI/CivDq05Qm4p7HO3qe5HjvVOe9jjbao3N0AqFp7i/OyEbU7mr1rp8UADMNz+tfSXb2Pq9irHbTXRDTnYnXFVNkc16TGuEi4U+p9a09UuvIg2If3j8KPT3qnZQFFGRWdWy0W50UE37zL0K7BxUw5qJTnj0qUjauaqOxpJ6lPVLn7PbuwPIWvmX4y+IReXtvo0b/6vNxMB3ZshR+Ayfxr6A8VXvkWUrFsAKSSOwr4+8T6q2pa/damxyJZTj2XoB+QFell9PmnzPoedmFTlhy9yng4waAKdLwcjoeRR1HFe0eIhwwBg1Vl3KSQOvSp2zjilQKyc9aYBcXcNou1jlwMbB1rJuL2W5OCSqdlHSrVxZRs24Eg96asCx9VBpWEykkZY5xUggPXFXNq9lpQntTsIqxSzwNmJ2X2zxVtdTviAGKOB6inBM0vlimNXD+0XX5jb5Ps1LBryxyK/lyIynKsjcg+opUT0FJJZwyj5lwfUUmO7PZPh58fnsylj4kuHu7bgJcsP3sf+9/eH6/Wu/wDiJ8TLTw74fjvNNuYbm5vVP2QqcqB3kPsP58V8prp5RzvIMX96p3S7kTYY5FhRRgdVAP8ASuOeCpykpHbTzCpGDjuW9U8QNczy3Lu9zcysWklkOSzHqSe9ZBMl0++Ylj2FTNanjIqaOIIvvXZaxwttkKxY4xUgtWY9cVIq5NW0jHemBTFnnqakSzHuatLHmpo4yBQBT+xKeMGrcFosQGRUwQA5oZ88UDsDHsKaqnrTguakAA4oGVmGahkXDVbde+KglGKAC35kH51DGoa5ky+1t5YVPbDnNQIcy3BIBwcfSgRPGSXJPc1FI370t1xRHMqOinq3Apjn7x680AXbUZTce9T/AEqK34hFJJMsKlnOBQMtxSFSCcfjW5pmnQaqVWGMBh972rk0u2m6cCtfR9QnsLnzIWwSpBrixtD2lN23RUWk9TT1nS7cTCK5O5o/u4qSO1F/p+4ggpwCfSs7VLiS0iS8uWJM3QVU0jxBeSZjcDyQcfhXg+xqOneL2Inudz8OteisdcGkA4Sfjcem6isJJV0uaK+t0Vvm3bh2NFefXwzqS5oIwcLs+tUCxAKoAA7UryAAsxwAM1Geeaz9RnJHkKev3iPT0r0ZS5UfUQhzOxXeRru43n6D2FaEYIXGelVLaIL071cHP0rmV27s7rJKyJIWzzRcS7Rg596IxgcjFU76cqrHjitkQzzz4xauNO8I37I+2SVRAmDySxx/LNfMM6CVenB4r2H9oLWDKNN0uJ/mLNcuAcZx8o/mfyrx9ZQy8jGf0Ne9l9O1K/c8HMKnNV5ew6AGSzUH70Z2n6UkXcGizOyd4z0YZGacybXNd1jhTHFR6VXYlTirJ6VDKvOaYMaMMOaPLz2pmcGp42BAFAhohHpil8nn2qdQDTlSgZX8mlEWO1WmUAdKjoERqmO1KVHen01+9AXGIodXTJAJx0q3Fqt3b29xa+XHtuIVgkYD76qQRx68CodO+aKTj/lof5CrBjGQccigDPdXx9zj1pY4Gc5q7LGCp47ZoRcCgYxIETtzTwgzT8DrSUAAUClJx0pO9GOKBhuNAPNGM0q8CgCRW4FO61FnFKH5oAkYVWnXirCtu4pko4FAEUPyjNVQf3kp45c1b6Csq4lENxJgEc/nQJkgc+eZOycD61LEDIwX1qBA20Ke/JqxA5WdQMbQPmNAJl15VhiLE4Aqim+8k3uMIOi+1Rzy/aZto+4P1q6m2NMd6AHKixjjAxV2wk8tllbnvVDmVgq9+tWVkCkKvQUnsM279pdViWPyA8UfTFN0ezS5S4gWIhgp5I6VL4Z1WOy1FFuADBKNjZ7HsauXBms7q/8AsqhVbofavm8ZTlSbgtuhSjfVmbaH5GsPOG9jwD60VVs7cwq2oy58xD8oorKcZ39wy06n2RczC2iLnt09zWXEhk+djuZuaW6u/t0qLGf3ac/U1LChXAPauecrvQ+uow5Vd7k0aEcEVNGpOfrTIuTU6cE5pwRbGudqe4rG1OYBD7DNa1y2Bx3rm/EN0lnZTzuQFjjLsfYDNaJXdiNtT5b+LOp/2x43v/KlP+i7YEGf7o5/UmuUiujICrgCRe3rSX9x/aV/Pdy7o5p5GkLHoSTn+tMlhbaHPEg7joa+ppx5YqJ8rVnzTciVZgLpG3DB4NaTlTz1Nc8ZTuU9wc1uQNvHrVkBntSEZFOZcGjHFMRA6c00Eg1YK1E6dwKAJYnqyrAgVQUlTUqykGgaLZpjJ3FKkgfvT8CgZFggUyToanNQzLwRQKwaV/y2XsGB/Sr+ARxVDTR++mUegNX9pFAISQfLUURDAVN6Z6Zqsny5+tBRMV4puM0oelyCKAEC5oK4p6Up5FAEdJUm2jYKBEWcUDmprq1mtJfLnieJyocKwwdpGQfyqHoaAHBgDQ7hlqM5pCaAuJI2Kxbtv9OAY8cE1qyvisTUT/pO4d1FITLc10B+7iO5z6dqezGGMQqcyN94+lQ2cawQmZh85+6PSpIEZ33MeW60CLFtEVHPFWSxHygUxeBgVPEoHzMOaY7ASII9o5Zup9qajEHpUogMhLZp22NPvkfnQUAlLYrvPDlmdd05hvAljIVs/wAQxwa4aKaMMcJxnrXW+EI7qSWYwBtowWwa83M4J0XJrYT2L174VuY4JEQBzjgUVpf2hrljeoGtfPgJ5yKK8GFTlW5lqe520AjANXAPeolOAKkTk5rJH2xZiWpScZqNPTOaczcVvFGRWuWwBXm3xc1P7F4N1IqQGkj8pc+rHb/WvQ7p9qkHmvDv2hrxv7Ds7GNsNNcBiM9lBP8AMit8NDmqpGOJnyUpM8Ue2jePa23J9Kz3EtplR88Xoe1KpuIG+YbhUktwQMkbkb9K+nPmDNkADcHIPINa1hJmNfpisuXb/CeM9Kt2Eny49KkRrkbhTBwcUkUmeKeyg81QxCvekKcU9SOmaCM0CICnNIRgdKm20FKBkMchU1ZjlyTk1XKYoCkGgEXCNwyDTCnFMSQipldTQMh09wl4wx1Q/wA60SQc1nwxYv8A0BQkEVelyDwOKABmyCMVWY7Sw9zUmXK8D8TUW0ljnrmgGJk9aepOaVUFKVxQA9WxSl6izRmgCUNz1rtfhlo2mapfXT35WZ4o8Rwfxc9X9BjjB9e1cMDz1rqfAOsjRNXmvinmmODAizjeC6hj77Vy2PagLGLqtrNbahcJcJOrrK6ky5LEg9z3Pf8AGqBHJrufijqZvNStoVIEcUb8KxKsRIyhvrhf6Vw5GaAGHimNxUhFMY7Rk0AVpWHNZN9zKmOeK0ZXznFUmXzLhAOcAnFIlk38Kx+g5qeNcHjrTIoGyWYfnTpZ0j+VSN3rTGi3EmevWpnYKPpVawkYROWPBORmoZZWkbCmgY+S7fOAaIleVuSealt7XgFxkmp2URDpj2oAfAoDgDtXVeFdek0i6YogdZVCMPx61zEC7ULnvTVu5NxKggZ61lWpqpBwfUHse23Gr+XaidYS+BkqOtFZfgzxFp9x4fjFzzdodjj1x0P5UV8hOFSlJwm9UF49j2/dlgKnjOFxUEYyxPSp1POMU47n2MiynFNlbApFbJNMlIx1rZGZTunyhP4186/HXUPN13T7U9UhaQj6tj+lfQt+/lwnGM18sfGW7kufHdwm7IghjQe3GT/Ou/L43q3ODMZWonKOQwII4qBogylccGmh5B3pjXEqfwivePnzPmUo5B6ipbNsEim3MglbdjBpLY4cj2qQNaB+aupgisuFsMOa0IX6VQxzLg0vansNwyKYFIPSgGMz81PPQU1hg0oPFAhCBRs9KkUAjFOCgUDRFspACKmpDtA5xQAkUo+1Rg8fKfxrb0ayh1K5likBdo496QK2GlO4AgfQHNc4XBvIQB/Fj9K0GiEhBOQQQQQcEH2NAy7rNiNOvUhhdmV4lkKP96Jj1U/lWawKysG68GplPltyGYk5JJyTVaWYCbJU8gUASrzTyAelRJKD0qTzOKAFMeKTbTlcNxQxFAyPbSrlSGUkMDkEdQaCRRkUCFeV5WLSuzsxJLMckk96aJNtBOajc0APaRRyKqTTbwR09qe3SoH70CuQSNiqENwY7oN2PFXZu/0rMH3/AMaQjQuLxvuqcGoYo2lOSc1Eoy3NalrGMjgAAZNMCR2EUCxjrjmnW0WCM9T1qJv3k27sKvQqAM96BlgKAtQgGaYKOg6mpHfA45pYV2IzdzQULMwPygcDiljUAZAxUYBJqZQRxQB1fw8WJ9ZMEzqIpYySD/eXkfpmiudsLlrO6WVJDGeRuB6UV4mOwUqlTmiQ0fXqDAp6/e61Cr9KeHryIn2bJQ2O9MdwTTN+40MQo961M2UNTcbD7V8k/EK+hvfG2ryq4IE+wf8AAQB/SvpD4ieLIPDGiXF1IQZSCkKZ5dyOB/Wvk66P2q5kldi8jMWZj3J5NetllN6zPIzSorKn8yQEEcYNRSjjJqJoiPusRUbTyJ97n616545Xk5c0sH+somkEhyBg02LhxUgXRJgjirtvLnvWduzU8TlQKoDYjOR1p2DVa3kyOTVxBuWgaIZRTFqaRaYBjk0DHDpRvA71E04Wq7TEk80CJ5LjHSoHnJphOT1pj8CgLjvMxPE2ekgJP41tebGDjeCa5qVjuU+hzWj9pLfj7YoC5qGRSetV5tjOPbNVBOw+6RUUk77gcigLlwbV601pio61U85m705ckdaAJ0uCeKeJSO9VlBHNOLcUAWPOz3pTL71U3+9J5nvQBaEnvS5zzVQTZ9qlWUGgCUmq8lT8GoZOlAipOcAn2rMB+fPvV+7bCNj0rPqWBYyA4rWhUiDHQtWPbKZZ1U9Acmt0IW4ApgJFFgZNWU6UwKQMUFigplEo+bjFWD0wKqWcplkYHoO9TtJzQMeq96XvSI9PAzQA00U4rRSEz67EgzjNPd8Y7Vl6jrOnaNF9p1C8htowOsjgf/rrgPEPx40SwDJpkUt/KOjH5I/zPJ/KvlaWHqVPgR9ZWr06fxM9RMqjrXHeMPiXo3hiJ1e5We6A4giOW/H0rw7xH8W/EviAun2kWlu3/LK3G3j3PU/nXGSPJMxaRixPOTXp0ct61GeVWzNbU0bni/xlf+L9TNzdORGMiOMH5UX0H+Nc1sAnZgvsTUxGPwqosh+0TRk9+BXrRioqyPJnJyfNJ6jn+WqU7huBU5mG4qeRVeWLacg5U96bIIacmNwqdLGd7OW8CfuYmCs3uagHWpTAsAjPFSo3NV1qVTxVAaEDbR1q0JSozmqEL5qywJWmA5rpjURuSelNaM03yjQMV2JpnzVKsZp4h56UCI1zSMCasiGgxACgDPliIFSbXByFzj3qaWP5TU/lqACYTj65oHYpfvM+gpzKxUA7evbrV5TjgRg/UVG8RByUUc9c0CKiLg1OGCih4iO1RHJ4oAkMopC2aYIyetSJHgUARnOKYQ2ateVmnLa7vSgCkAwpwZhV0WfuKeLRaAKkUrDhh+NErcVZe3RFLHjFZc9wMnrQMST5g2aovweKe8xbIBxUZ56mkxFyy2xrvbqT+lbsdzGy5BA9jXNW7neF7GrZZl6E0IDWkugOM1CZQwPPNZ4Dv/EasqjKOTmmO5e087csRV7YvWqMTLFGFJAPU0HUI4+C44oGX9npSYZee1UBrMCnlganh1S3m4LdfQ0DuWQ+T1opBsYZVwaKAG399PqEoe7u55scBpJC2B+NVHS2A+8x9KKKLJLQG29WRu8YHyLUJOaKKCRhINUJwY70P/ewaKKQMjnTZK2elOto5r2VYIEyzGiilJ2QRV2dm+lRQ6G2nhsLsLMx7t1zXB96KK5sO273NqySsPVsVKGoorpRgSxSY71qWzLLGPUUUUwJvKU9aPJQUUUxgUUelOVQKKKAHYHoKCoI7UUUDIZ4g0Zx1FWNmwcFfxoooEICx9F+lMdW3LlgRnpiiigYpQMeaT7NGOQM0UUAL5KY6Ck8pV+lFFAD0CgcJzT9pOAMUUUAhTCe5AqGa5hgGC2TRRQBj3uotN8qcCs5iTySaKKRIlJiiipAWM7ZFPoa0Rg0UU0BIrKvFTIwVd7Yx2HrRRVDRUnuJJ3Ij+maSPTnk5ZjzRRSESjRmYZB/WnNoVxHjDKD7sKKKEMmhtNRhP8AeHswNFFFMZ//2Q==" alt="তারিকুল ইসলাম (সুমন)"></div>
+    <div>
+      <div class="pname">তারিকুল ইসলাম (সুমন)</div>
+      <div class="pos"><i></i>Msc Mathematics<i></i></div>
+      <div class="chan">TIS Academy — Teach Idea For Success</div>
+      <div class="links">
+        <a href="https://www.youtube.com/@tis.academy24" target="_blank" rel="noopener"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#ff0000"/><path d="M13 10.5v11l9-5.5z" fill="#fff"/></svg><span>https://www.youtube.com/@tis.academy24</span></a>
+        <a href="https://www.facebook.com/tariqul.islam.422531/" target="_blank" rel="noopener"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#1877f2"/><path d="M18 27v-9h3l.5-3.5H18v-2.2c0-1 .3-1.7 1.8-1.7h1.8V7.5c-.3 0-1.4-.1-2.7-.1-2.7 0-4.4 1.6-4.4 4.6v2.5h-3V18h3v9z" fill="#fff"/></svg><span>https://www.facebook.com/tariqul.islam.422531/</span></a>
+        <a href="https://wa.me/8801755489719" target="_blank" rel="noopener"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#25d366"/><path d="M16 6.5a9.5 9.5 0 0 0-8.2 14.3L6.5 25.5l4.8-1.3A9.5 9.5 0 1 0 16 6.5zm0 17.3c-1.5 0-2.9-.4-4.1-1.1l-.3-.2-2.8.8.8-2.8-.2-.3A7.8 7.8 0 1 1 16 23.8zm4.3-5.8c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.4 6.4 0 0 1-3.2-2.8c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.8 2.3.9 2.5c.1.2 1.6 2.5 4 3.5 1.5.6 2 .7 2.8.6.4-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1 0-.2-.2-.2-.4-.3z" fill="#fff"/></svg><span>https://wa.me/8801755489719</span></a>
+        <a href="https://github.com/tariqulislam4015" target="_blank" rel="noopener"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#181717"/><path d="M16 6a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.4 1.1 2.9.8.1-.6.4-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.8 1a9.5 9.5 0 0 1 5 0c1.9-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 16 6z" fill="#fff"/></svg><span>https://github.com/tariqulislam4015</span></a>
+      </div>
+    </div>
+  </div>
+  <div class="start">
+    <h1>ইংরেজি সাহিত্য — <span>পড়ো, পরীক্ষা দাও</span>, এগিয়ে যাও</h1>
+    <p>BCS, ব্যাংক ও সব চাকরির পরীক্ষার জন্য Old English থেকে Post-Modern যুগ পর্যন্ত অধ্যায়ভিত্তিক নোট, টাইমারসহ MCQ পরীক্ষা ও সাথে সাথে ফলাফল।</p>
+    <div class="stats"><div><b id="stS">0</b><small>অধ্যায়</small></div><div><b id="stQ">0</b><small>MCQ প্রশ্ন</small></div><div><b id="stA">0</b><small>লেখক ও তথ্য</small></div></div>
+    <div class="row"><button class="btn" data-go="exam">📝 পরীক্ষা শুরু করো</button><button class="btn alt" data-go="study">📖 পড়া শুরু করো</button></div>
+  </div>
+</div></section>
+
+<main><div class="wrap">
+  <!-- STUDY -->
+  <section id="v-study">
+    <div class="study">
+      <aside class="side" id="side" aria-label="Sections"></aside>
+      <div id="secBox"></div>
+    </div>
+  </section>
+
+  <!-- EXAM SETUP -->
+  <section id="v-exam" hidden>
+    <div class="panel" id="setup">
+      <h2 style="font-size:clamp(26px,3vw,34px)">পরীক্ষার সেটিংস</h2>
+      <p style="color:var(--mut);margin:6px 0 20px">অধ্যায় বেছে নাও অথবা সব অধ্যায় মিলিয়ে একটি পূর্ণ মডেল টেস্ট দাও।</p>
+      <div class="setup">
+        <div class="field"><label for="selSec">অধ্যায়</label><select id="selSec"></select><small id="secCount"></small></div>
+        <div class="field"><label>প্রশ্নের সংখ্যা</label><div class="chips" id="chN"></div></div>
+        <div class="field"><label>সময় (প্রতি প্রশ্নে)</label><div class="chips" id="chT"></div><small id="tInfo"></small></div>
+        <div class="field"><label>Negative marking (প্রতিটি ভুলে কাটা যাবে)</label><div class="chips" id="chNeg"></div></div>
+      </div>
+      <div class="row" style="margin-top:24px"><button class="btn g" id="begin">▶ পরীক্ষা শুরু</button></div>
+    </div>
+
+    <div id="examBox" hidden>
+      <div class="exam">
+        <div class="qcard">
+          <div class="qtop"><span id="qNo"></span><span id="qSec"></span></div>
+          <div class="prog"><i id="progBar"></i></div>
+          <div class="qtext" id="qText"></div>
+          <div class="opts" id="opts"></div>
+          <div class="qnav">
+            <button class="btn alt" id="prev">← আগের</button>
+            <button class="btn alt" id="flag">⚑ পরে দেখবো</button>
+            <button class="btn g" id="next">পরের →</button>
+          </div>
+          <p style="color:var(--mut);font-size:13.5px;margin:14px 0 0">কিবোর্ড: 1–4 বা A–D দিয়ে উত্তর, ← → দিয়ে প্রশ্ন পরিবর্তন।</p>
+        </div>
+        <aside class="timer">
+          <div class="tb">
+            <div class="ring" id="ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--soft)" stroke-width="10"/><circle id="arc" cx="60" cy="60" r="52" fill="none" stroke="var(--leaf)" stroke-width="10" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="0"/></svg><div><span><b id="clock">00:00</b><small>সময় বাকি</small></span></div></div>
+            <div><div style="font-weight:600" id="ansCount"></div><div class="legend"><span>■ উত্তর দেওয়া</span><span>▁ পরে দেখবো</span></div></div>
+          </div>
+          <div class="grid" id="grid"></div>
+          <button class="btn" style="width:100%" id="submit">✔ জমা দাও</button>
+        </aside>
+      </div>
+    </div>
+
+    <div id="resBox" hidden></div>
+  </section>
+
+  <!-- HISTORY -->
+  <section id="v-history" hidden>
+    <div class="panel">
+      <h2 style="font-size:clamp(26px,3vw,34px)">আগের পরীক্ষার ফলাফল</h2>
+      <p style="color:var(--mut);margin:6px 0 16px">ফলাফল শুধু এই ব্রাউজারে সংরক্ষিত থাকে।</p>
+      <div id="histBox"></div>
+    </div>
+  </section>
+</div></main>
+
+<footer><div class="wrap"><span>© TIS Academy · TIS LitMaster — তৈরি করেছেন তারিকুল ইসলাম (সুমন)</span><a href="https://www.youtube.com/@tis.academy24" target="_blank" rel="noopener">YouTube-এ আরও ক্লাস দেখো →</a></div></footer>
+
+<div class="dlg" id="dlg" role="dialog" aria-modal="true"><div><h3 id="dTitle" style="font-size:22px"></h3><p id="dText"></p><div class="row" style="justify-content:flex-end"><button class="btn alt" id="dNo" style="color:var(--ink)">না, ফিরে যাই</button><button class="btn g" id="dYes">হ্যাঁ</button></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SECTIONS=[
+{id:"periods",t:"Periods at a Glance",bn:"যুগবিভাগ এক নজরে",yr:"450 – Present",
+intro:["ইংরেজি সাহিত্যকে মোটামুটি ৮টি বড় যুগে ভাগ করা হয়। পরীক্ষায় সাল ও যুগের অন্য নাম খুব বেশি আসে।","Old English যুগের অন্য নাম Anglo-Saxon Period। 1066 সালের Norman Conquest থেকে Middle English যুগ শুরু।","Elizabethan যুগ (1558–1603) ও Romantic যুগ (1798–1832) সবচেয়ে গুরুত্বপূর্ণ। Romantic যুগ শুরু Lyrical Ballads (1798) দিয়ে।","Restoration যুগকে Age of Dryden, Augustan যুগকে Age of Pope এবং Age of Sensibility-কে Age of Johnson বলা হয়।"],
+authors:[["Old English / Anglo-Saxon","450 – 1066","ভাষা: Old English; সবচেয়ে পুরনো মহাকাব্য Beowulf"],["Anglo-Norman Period","1066 – 1340","রাজদরবারের ভাষা ছিল French"],["Age of Chaucer","1340 – 1400","ইংরেজি সাহিত্যের প্রকৃত যাত্রা শুরু"],["Dark / Barren Period","1400 – 1500","সাহিত্যে বন্ধ্যা সময়; 1476-এ Caxton-এর ছাপাখানা"],["Elizabethan Period","1558 – 1603","Queen Elizabeth I; Shakespeare, Marlowe, Spenser"],["Jacobean Period","1603 – 1625","King James I; Metaphysical poetry"],["Caroline Period","1625 – 1649","King Charles I; Cavalier poets"],["Commonwealth / Puritan","1649 – 1660","রাজা ছিলেন না; Cromwell-এর শাসন"],["Restoration Period","1660 – 1700","রাজতন্ত্র পুনঃপ্রতিষ্ঠা; Age of Dryden"],["Augustan Period","1700 – 1745","Age of Pope; Neo-classical"],["Age of Sensibility","1745 – 1798","Age of Johnson / Transition"],["Romantic Period","1798 – 1832","Lyrical Ballads (1798) থেকে শুরু"],["Victorian Period","1832 – 1901","Queen Victoria; উপন্যাসের স্বর্ণযুগ"],["Modern Period","1901 – 1939","Edwardian (1901–10), Georgian (1910–36)"],["Post-Modern Period","1939 – Present","দ্বিতীয় বিশ্বযুদ্ধের পর থেকে"]],
+cols:["যুগ","সময়কাল","মনে রাখো"],
+qs:[
+["The Old English period is also known as the—",["Anglo-Norman Period","Anglo-Saxon Period","Puritan Period","Dark Period"],1,"Old English (450–1066) = Anglo-Saxon Period."],
+["The Middle English period began with—",["The Norman Conquest of 1066","The death of Chaucer","The invention of printing","The Reformation"],0,"1066-এর Norman Conquest থেকে Middle English যুগ।"],
+["The Elizabethan Period covers—",["1500–1558","1558–1603","1603–1625","1625–1649"],1,""],
+["The Romantic Period started in 1798 with the publication of—",["Paradise Lost","Lyrical Ballads","The Prelude","Songs of Innocence"],1,""],
+["The Victorian Period ended in—",["1832","1880","1901","1914"],2,"Queen Victoria মারা যান 1901 সালে।"],
+["The Restoration Period is also called the Age of—",["Pope","Johnson","Dryden","Milton"],2,""],
+["The Augustan Age is known as the Age of—",["Alexander Pope","John Dryden","Samuel Johnson","Jonathan Swift"],0,""],
+["The Jacobean Period is named after—",["King James I","King Charles I","King John","James Joyce"],0,""],
+["In which period did England have no monarch?",["Caroline","Commonwealth","Restoration","Jacobean"],1,"1649–1660: Commonwealth, Cromwell-এর শাসন।"],
+["The 15th century is called the barren age of English literature because—",["No printing existed","Very little great literature was produced","English was banned","All writers left England"],1,""],
+["The Age of Sensibility is also known as the Age of—",["Dryden","Johnson","Pope","Chaucer"],1,""],
+["The Modern Period roughly covers—",["1832–1901","1901–1939","1939–present","1798–1832"],1,""]]},
+
+{id:"old",t:"The Old English Period",bn:"প্রাচীন ইংরেজি যুগ",yr:"450 – 1066",
+intro:["এই যুগে ইংল্যান্ড জার্মানির Anglo, Saxon ও Jute জাতির অধীনে ছিল, তাই ভাষা ছিল Germanic ধাঁচের Old English।","সাহিত্য ছিল মূলত মৌখিক ও Alliterative verse-এ লেখা। বেশিরভাগ লেখকের নাম অজানা।","Beowulf: ইংরেজি সাহিত্যের প্রাচীনতম মহাকাব্য (প্রায় ৩১৮২ লাইন)। নায়ক Beowulf দানব Grendel, তার মা এবং শেষে এক ড্রাগনকে হত্যা করে।","গদ্যে King Alfred ও ইতিহাসে Venerable Bede (Latin ভাষায়) সবচেয়ে গুরুত্বপূর্ণ।"],
+authors:[["Beowulf (Anonymous)","Oldest English epic","Hero: Beowulf; monsters: Grendel, Grendel's mother, a dragon"],["Caedmon","Caedmon's Hymn","First known English poet; Father of English song"],["Cynewulf","Christ, Juliana, Elene, The Fates of the Apostles","Signed his poems in runic letters"],["Venerable Bede","Ecclesiastical History of the English People (Latin)","Father of English history"],["King Alfred the Great","Anglo-Saxon Chronicle (began under him); translations","Father of English prose"],["Anonymous lyrics","Widsith, The Seafarer, The Wanderer, Deor's Lament","Elegiac Old English poems"]],
+qs:[
+["The oldest epic in English literature is—",["Paradise Lost","Beowulf","The Faerie Queene","The Canterbury Tales"],1,""],
+["Grendel is a monster in—",["Beowulf","Paradise Lost","The Tempest","Macbeth"],0,""],
+["Who is known as the first English poet whose name we know?",["Cynewulf","Caedmon","Bede","Chaucer"],1,""],
+["Who is called the Father of English History?",["King Alfred","Venerable Bede","Edward Gibbon","Caedmon"],1,""],
+["Bede wrote his Ecclesiastical History in—",["Old English","French","Latin","Greek"],2,""],
+["The Anglo-Saxon Chronicle is associated with—",["King Alfred","Caedmon","Chaucer","Bede"],0,""],
+["Who is often called the Father of English Prose?",["Bacon","King Alfred","Dryden","Malory"],1,"কিছু বইয়ে Wycliffe-কেও বলা হয়, তবে বেশি প্রচলিত উত্তর King Alfred।"],
+["Old English poetry was mainly written in—",["Rhymed couplets","Blank verse","Alliterative verse","Free verse"],2,""],
+["Cynewulf is known for—",["Signing poems with runes","Writing Beowulf","Translating the Bible","Writing sonnets"],0,""],
+["'The Seafarer' belongs to the—",["Old English period","Elizabethan period","Romantic period","Victorian period"],0,""],
+["Who is called the Father of English Song?",["Caedmon","Chaucer","Burns","Cynewulf"],0,""],
+["The hero of Beowulf finally dies fighting—",["Grendel","Grendel's mother","A dragon","A giant"],2,""]]},
+
+{id:"middle",t:"The Middle English Period",bn:"মধ্য ইংরেজি যুগ",yr:"1066 – 1500",
+intro:["1066-এ Normandy-র William ইংল্যান্ড দখল করেন। ফলে দীর্ঘ সময় রাজদরবারের ভাষা ছিল French।","Geoffrey Chaucer (1340–1400) এই যুগের প্রধান কবি: Father of English Poetry। তাঁকে Westminster Abbey-র Poets' Corner-এ প্রথম সমাহিত করা হয়।","The Canterbury Tales: Tabard Inn (Southwark) থেকে Thomas Becket-এর মাজার Canterbury-র দিকে যাত্রা করা তীর্থযাত্রীদের গল্প; অসমাপ্ত রচনা।","John Wycliffe প্রথম পুরো Bible ইংরেজিতে অনুবাদ করান: Morning Star of the Reformation। William Caxton 1476-এ ইংল্যান্ডে প্রথম ছাপাখানা চালু করেন।"],
+authors:[["Geoffrey Chaucer","The Canterbury Tales; Troilus and Criseyde; The Book of the Duchess; The House of Fame; The Parliament of Fowls; The Legend of Good Women","Father of English Poetry; first to use the heroic couplet in English"],["John Wycliffe","English translation of the Bible","Morning Star of the Reformation"],["William Langland","Piers Plowman","Allegorical dream-vision poem"],["Sir Thomas Malory","Le Morte d'Arthur","King Arthur legends; printed by Caxton in 1485"],["John Gower","Confessio Amantis","Called 'moral Gower' by Chaucer"],["Pearl Poet (Anonymous)","Sir Gawain and the Green Knight; Pearl","Arthurian romance"],["William Caxton","First printing press in England (1476)","Printer & translator"],["Dante Alighieri","The Divine Comedy (Italian)","Inferno, Purgatorio, Paradiso"],["Giovanni Boccaccio","The Decameron","Influenced Chaucer"]],
+qs:[
+["Who is known as the Father of English Poetry?",["Milton","Wordsworth","Chaucer","Spenser"],2,""],
+["'The Canterbury Tales' was written by—",["Langland","Chaucer","Gower","Malory"],1,""],
+["The pilgrims of The Canterbury Tales start their journey from—",["The Mermaid Tavern","The Tabard Inn","The Globe","Westminster"],1,""],
+["The pilgrims in The Canterbury Tales were going to the shrine of—",["St. Paul","Thomas Becket","King Arthur","St. George"],1,""],
+["Who translated the Bible into English first?",["Tyndale","Wycliffe","Caxton","Bede"],1,""],
+["Who is called the Morning Star of the Reformation?",["Martin Luther","John Wycliffe","Thomas More","Chaucer"],1,""],
+["'Piers Plowman' is written by—",["William Langland","John Gower","Chaucer","Malory"],0,""],
+["'Le Morte d'Arthur' was written by—",["Spenser","Sir Thomas Malory","Tennyson","Caxton"],1,""],
+["Who set up the first printing press in England?",["Gutenberg","William Caxton","Wycliffe","Henry VIII"],1,"1476 সালে Westminster-এ।"],
+["'The Divine Comedy' was written by—",["Dante","Boccaccio","Petrarch","Virgil"],0,""],
+["'Troilus and Criseyde' is a poem by—",["Shakespeare","Chaucer","Gower","Dryden"],1,""],
+["'Sir Gawain and the Green Knight' is a—",["Restoration comedy","Middle English romance","Romantic ode","Victorian novel"],1,""],
+["Chaucer was the first poet buried in—",["Stratford","Poets' Corner, Westminster Abbey","Canterbury","St. Paul's"],1,""],
+["The court language of England after the Norman Conquest was—",["Latin","German","French","Italian"],2,""]]},
+
+{id:"eliz",t:"The Renaissance: Elizabethan Period",bn:"রেনেসাঁ: এলিজাবেথীয় যুগ",yr:"1558 – 1603",
+intro:["Renaissance মানে 'পুনর্জাগরণ' — গ্রিক ও ল্যাটিন জ্ঞানের নবজাগরণ। ইংল্যান্ডে এর শ্রেষ্ঠ সময় Queen Elizabeth I-এর আমল।","নাটকের স্বর্ণযুগ: University Wits (Marlowe, Kyd, Greene, Peele, Lyly, Nashe, Lodge) Shakespeare-এর পথ তৈরি করেন।","Gorboduc (Norton & Sackville) প্রথম ইংরেজি ট্র্যাজেডি; Ralph Roister Doister (Udall) প্রথম ইংরেজি কমেডি।","Sir Thomas Wyatt ইংরেজিতে Sonnet আনেন, Earl of Surrey Blank verse চালু করেন।"],
+authors:[["Edmund Spenser","The Faerie Queene; The Shepheardes Calender; Amoretti; Epithalamion; Prothalamion","Poet's Poet; Spenserian stanza (9 lines)"],["Christopher Marlowe","Doctor Faustus; Tamburlaine; The Jew of Malta; Edward II","University Wit; famous for his 'mighty line' (blank verse)"],["Thomas Kyd","The Spanish Tragedy","Father of revenge tragedy"],["Norton & Sackville","Gorboduc","First English tragedy"],["Nicholas Udall","Ralph Roister Doister","First English comedy"],["Sir Thomas Wyatt","Sonnets","Introduced the sonnet into English"],["Sir Philip Sidney","Arcadia; Astrophel and Stella; An Apology for Poetry","Ideal Elizabethan courtier"],["John Lyly","Euphues","Gave the word 'euphuism'"],["Ben Jonson","Volpone; The Alchemist; Every Man in His Humour","Comedy of Humours"],["Francis Bacon","Essays; The Advancement of Learning; Novum Organum; New Atlantis","Father of English Essay"],["Thomas More","Utopia (in Latin, 1516)","Imaginary ideal state"],["Richard Hooker","Of the Laws of Ecclesiastical Polity","Prose writer"],["George Chapman","Translation of Homer","Keats wrote a sonnet on it"],["Thomas Dekker","The Shoemaker's Holiday","Comedy"],["Arthur Golding","Translation of Ovid's Metamorphoses","Used by Shakespeare"],["Niccolò Machiavelli","The Prince","'Machiavellian' = cunning, selfish"],["Miguel de Cervantes","Don Quixote","Spanish; satire on chivalry"],["Galileo Galilei","Dialogue Concerning the Two Chief World Systems","Italian scientist"]],
+qs:[
+["Who is called the 'Poet's Poet'?",["Chaucer","Spenser","Shakespeare","Milton"],1,""],
+["'The Faerie Queene' is written by—",["Sidney","Spenser","Marlowe","Wyatt"],1,""],
+["Who wrote 'Doctor Faustus'?",["Ben Jonson","Christopher Marlowe","Thomas Kyd","Shakespeare"],1,""],
+["'The Spanish Tragedy' was written by—",["Thomas Kyd","Robert Greene","John Lyly","Marlowe"],0,""],
+["The first English tragedy is—",["Hamlet","Gorboduc","Tamburlaine","The Spanish Tragedy"],1,""],
+["The first English comedy is—",["Ralph Roister Doister","Volpone","The Alchemist","As You Like It"],0,""],
+["Who introduced the sonnet into English literature?",["Spenser","Sir Thomas Wyatt","Sidney","Shakespeare"],1,""],
+["Who is the Father of the English Essay?",["Addison","Francis Bacon","Charles Lamb","Dr. Johnson"],1,""],
+["'Volpone' was written by—",["John Webster","Ben Jonson","Marlowe","Shakespeare"],1,""],
+["'Utopia' was written by—",["Francis Bacon","Thomas More","Philip Sidney","Hobbes"],1,""],
+["'Utopia' was originally written in—",["English","French","Latin","Italian"],2,""],
+["'The Prince' was written by—",["Dante","Machiavelli","Cervantes","Galileo"],1,""],
+["A Machiavellian character is—",["an honest person","a cunning, selfish person","a brave person","a judicious person"],1,""],
+["'Don Quixote' is a novel by—",["Cervantes","Machiavelli","Goethe","Voltaire"],0,""],
+["'Euphues' was written by—",["John Lyly","Robert Greene","Thomas Nashe","George Peele"],0,""],
+["'Astrophel and Stella' is a sonnet sequence by—",["Spenser","Sidney","Wyatt","Surrey"],1,""],
+["Marlowe belonged to the group called—",["Metaphysical poets","University Wits","Lake Poets","Cavalier poets"],1,""],
+["Spenserian stanza has how many lines?",["8","9","10","14"],1,""]]},
+
+{id:"shakes",t:"William Shakespeare",bn:"উইলিয়াম শেক্সপিয়র",yr:"1564 – 1616",
+intro:["জন্ম ও মৃত্যু Stratford-upon-Avon-এ, তাই তাঁকে বলা হয় Bard of Avon। তিনি 37টি নাটক (কোনো মতে 38), 154টি Sonnet এবং দুটি দীর্ঘ কবিতা (Venus and Adonis, The Rape of Lucrece) লিখেছেন।","Four Great Tragedies: Hamlet, Othello, King Lear, Macbeth। তাঁর শেষ নাটক The Tempest।","তাঁর নাটকের বেশিরভাগ লেখা Blank verse-এ (unrhymed iambic pentameter)। নাটক মঞ্চস্থ হতো The Globe Theatre-এ।","Measure for Measure, The Winter's Tale ইত্যাদিকে Tragi-comedy বা Problem play/Romance বলা হয়।"],
+authors:[["Hamlet","Tragedy","Hamlet, Ophelia, Horatio, Polonius, Claudius, Gertrude"],["Othello","Tragedy","Othello (the Moor), Desdemona, Iago, Cassio; a handkerchief as a token of love"],["King Lear","Tragedy","Lear, Cordelia, Goneril, Regan"],["Macbeth","Tragedy","Macbeth, Lady Macbeth, Banquo, the three Witches"],["Romeo and Juliet","Tragedy","Montague vs Capulet"],["Julius Caesar","Roman tragedy","Brutus, Cassius, Mark Antony"],["Antony and Cleopatra","Roman tragedy","Antony, Cleopatra"],["The Merchant of Venice","Comedy","Shylock (a Jew), Portia, Antonio, Bassanio"],["As You Like It","Comedy","Rosalind, Orlando, Jaques; Forest of Arden"],["Twelfth Night","Comedy","Viola, Malvolio, Olivia"],["A Midsummer Night's Dream","Comedy","Puck, Oberon, Titania, Bottom"],["Much Ado About Nothing","Comedy","Beatrice, Benedick"],["The Tempest","Romance (last play)","Prospero, Miranda, Caliban, Ariel"],["Measure for Measure","Tragi-comedy / Problem play","Angelo, Isabella"],["Henry IV, Henry V, Richard III","History plays","Falstaff appears in Henry IV"]],
+cols:["নাটক","ধরন","চরিত্র / তথ্য"],
+quotes:[["To be, or not to be: that is the question.","Hamlet"],["Frailty, thy name is woman!","Hamlet"],["Brevity is the soul of wit.","Hamlet"],["There are more things in heaven and earth, Horatio, than are dreamt of in your philosophy.","Hamlet"],["All the world's a stage, and all the men and women merely players.","As You Like It"],["Blow, blow, thou winter wind, thou art not so unkind as man's ingratitude.","As You Like It"],["Et tu, Brute?","Julius Caesar"],["Cowards die many times before their deaths.","Julius Caesar"],["The quality of mercy is not strained.","The Merchant of Venice"],["Fair is foul, and foul is fair.","Macbeth"],["What's in a name? That which we call a rose by any other name would smell as sweet.","Romeo and Juliet"],["Uneasy lies the head that wears a crown.","Henry IV, Part 2"],["Some are born great, some achieve greatness, and some have greatness thrust upon 'em.","Twelfth Night"]],
+qs:[
+["Shakespeare is known as the—",["Poet's Poet","Bard of Avon","Father of English Poetry","Wizard of the North"],1,""],
+["How many sonnets did Shakespeare write?",["104","144","154","164"],2,""],
+["Which is Shakespeare's last play?",["As You Like It","Macbeth","The Tempest","Othello"],2,""],
+["Caliban is a character in—",["King Lear","The Tempest","Othello","Man and Superman"],1,""],
+["Brutus is a famous character in—",["King Lear","Julius Caesar","The Tempest","Hamlet"],1,""],
+["Ophelia is an important character in—",["Macbeth","The Tempest","Hamlet","King Lear"],2,""],
+["Shylock is a character of—",["Doctor Faustus","The Merchant of Venice","The Way of the World","Arms and the Man"],1,""],
+["'The Merchant of Venice' is a play about—",["a Jew","a Moor","a Roman","a Turk"],0,""],
+["Othello gave Desdemona ____ as a token of love.",["a ring","a handkerchief","a pendant","bangles"],1,""],
+["'Frailty, thy name is woman' is from—",["Macbeth","Hamlet","Othello","King Lear"],1,""],
+["'All the world's a stage' is a line from—",["Twelfth Night","As You Like It","The Tempest","Hamlet"],1,""],
+["'Et tu, Brute?' is uttered in—",["Antony and Cleopatra","Julius Caesar","Hamlet","Coriolanus"],1,""],
+["Shakespeare composed most of his plays in—",["Alliterative verse","Sonnet form","Iambic pentameter (blank verse)","Dactylic hexameter"],2,""],
+["Which is NOT one of Shakespeare's four great tragedies?",["Hamlet","Romeo and Juliet","Othello","King Lear"],1,""],
+["'Measure for Measure' is a successful—",["tragedy","comedy","tragi-comedy","melodrama"],2,""],
+["Iago is the villain in—",["Othello","Macbeth","Hamlet","King Lear"],0,""],
+["Cordelia is the youngest daughter of—",["Prospero","King Lear","Polonius","Duncan"],1,""],
+["'Fair is foul, and foul is fair' is spoken by the witches in—",["Macbeth","Hamlet","The Tempest","King Lear"],0,""],
+["Shakespeare was born at—",["London","Stratford-upon-Avon","Oxford","Canterbury"],1,""],
+["'Much Ado About Nothing' is written by—",["Jane Austen","Charles Dickens","William Shakespeare","Virginia Woolf"],2,""]]},
+
+{id:"jaco",t:"Jacobean, Caroline & Commonwealth",bn:"জ্যাকোবীয়, ক্যারোলাইন ও কমনওয়েলথ যুগ",yr:"1603 – 1660",
+intro:["Jacobean (1603–1625): King James I-এর নামে। 1611 সালে King James Bible (Authorized Version) প্রকাশ পায়।","John Donne Metaphysical poetry-র প্রবর্তক। 'Metaphysical' শব্দটি এই কবিদের জন্য প্রথম জনপ্রিয় করেন Dr. Samuel Johnson।","Caroline (1625–1649): King Charles I-এর নামে। Cavalier poets (Herrick, Lovelace, Suckling) রাজার সমর্থক ছিলেন।","Commonwealth (1649–1660): ইংল্যান্ডে রাজা ছিল না। Hobbes-এর Leviathan এই সময়ের বিখ্যাত রাজনৈতিক দর্শন।","John Webster-এর ট্র্যাজেডিও এই সময়ের (Jacobean)।"],
+authors:[["John Donne","Songs and Sonnets; Holy Sonnets ('Death, be not proud'); 'The Sun Rising'; 'The Canonization'; Devotions","Founder of Metaphysical poetry; 'No man is an island'"],["Andrew Marvell","To His Coy Mistress; The Garden","Metaphysical poet"],["George Herbert","The Temple","Religious metaphysical poet"],["Henry Vaughan","Silex Scintillans; 'The Retreat'","Metaphysical poet"],["Abraham Cowley","Pindarique Odes; Davideis","Metaphysical poet"],["John Webster","The Duchess of Malfi; The White Devil","Jacobean tragedy"],["Robert Herrick","Hesperides; 'To the Virgins, to Make Much of Time'","Cavalier poet: 'Gather ye rosebuds while ye may'"],["Richard Lovelace","To Althea, from Prison","'Stone walls do not a prison make'"],["Thomas Hobbes","Leviathan (1651)","Political philosopher"],["Jeremy Taylor","Holy Living; Holy Dying","Prose writer; 'Shakespeare of divines'"],["Izaak Walton","The Compleat Angler","Prose on fishing"],["Sir Thomas Browne","Religio Medici","Prose stylist"]],
+qs:[
+["Who is the founder of Metaphysical poetry?",["Andrew Marvell","John Donne","George Herbert","Cowley"],1,""],
+["'Death, be not proud' is a sonnet by—",["Milton","John Donne","Shakespeare","Herbert"],1,""],
+["'No man is an island' is a famous line by—",["John Donne","Ben Jonson","Milton","Bacon"],0,""],
+["'To His Coy Mistress' is written by—",["Herrick","Andrew Marvell","Lovelace","Donne"],1,""],
+["Robert Herrick was an English—",["Novelist","Historian","Poet","Dramatist"],2,""],
+["'Gather ye rosebuds while ye may' was written by—",["Robert Herrick","Lovelace","Suckling","Donne"],0,""],
+["'Leviathan' was written by—",["John Locke","Thomas Hobbes","Rousseau","Bacon"],1,""],
+["'The Duchess of Malfi' is a play by—",["John Webster","Ben Jonson","Thomas Kyd","Marlowe"],0,""],
+["The term 'Metaphysical poets' was popularised by—",["Dryden","Dr. Samuel Johnson","T. S. Eliot","Pope"],1,""],
+["The Authorized Version (King James Bible) appeared in—",["1588","1611","1660","1667"],1,""],
+["'The Temple' is a collection of poems by—",["George Herbert","Henry Vaughan","Cowley","Crashaw"],0,""],
+["Cavalier poets supported—",["Parliament","King Charles I","Cromwell","The Church of Rome"],1,""],
+["'The Compleat Angler' was written by—",["Izaak Walton","Thomas Browne","Jeremy Taylor","Hobbes"],0,""],
+["'Stone walls do not a prison make' was written by—",["Lovelace","Herrick","Marvell","Donne"],0,""]]},
+
+{id:"resto",t:"Neoclassical: The Restoration Period",bn:"নিওক্লাসিক্যাল: রেস্টোরেশন যুগ",yr:"1660 – 1700",
+intro:["1660 সালে King Charles II-এর হাতে রাজতন্ত্র পুনঃপ্রতিষ্ঠা পায় — তাই নাম Restoration। Neoclassical যুগ (1660–1798) যুক্তি, নিয়ম ও ক্লাসিক্যাল আদর্শকে গুরুত্ব দেয়।","John Milton (জন্ম 1608) Puritan কবি, কিন্তু তাঁর মহাকাব্য Paradise Lost প্রকাশ পায় 1667-তে। অন্ধ অবস্থায় তিনি এটি লেখেন।","John Dryden: Father of English Criticism; 1668 সালে প্রথম আনুষ্ঠানিক Poet Laureate।","এই যুগে Comedy of Manners জনপ্রিয় হয় (Congreve, Wycherley, Farquhar)।"],
+authors:[["John Milton","Paradise Lost (12 books, blank verse); Paradise Regained; Samson Agonistes; Lycidas; Areopagitica; 'On His Blindness'; L'Allegro; Il Penseroso; Comus","The blind poet; Grand Style; Satan is the most vivid character of Paradise Lost"],["John Dryden","All for Love; Absalom and Achitophel; Mac Flecknoe; An Essay of Dramatic Poesy","Father of English Criticism; first official Poet Laureate"],["William Congreve","The Way of the World; Love for Love; The Mourning Bride","Comedy of Manners"],["William Wycherley","The Country Wife; The Plain Dealer","Restoration comedy"],["George Farquhar","The Beaux' Stratagem; The Recruiting Officer","Restoration comedy"],["Samuel Butler","Hudibras","Satire on the Puritans"],["John Bunyan","The Pilgrim's Progress","Allegory; hero: Christian"],["John Locke","An Essay Concerning Human Understanding; Two Treatises of Government","Empiricist philosopher"],["Aphra Behn","Oroonoko","First professional woman writer in English"],["Samuel Pepys","The Diary","Records the Great Fire of London"]],
+quotes:[["Better to reign in Hell, than serve in Heaven.","Milton, Paradise Lost"],["They also serve who only stand and wait.","Milton, On His Blindness"]],
+qs:[
+["'Paradise Lost' was written by—",["Dryden","John Milton","Spenser","Bunyan"],1,""],
+["'Paradise Lost' contains how many books (final edition)?",["10","12","24","9"],1,""],
+["'Paradise Lost' is written in—",["Heroic couplet","Blank verse","Spenserian stanza","Free verse"],1,""],
+["'Lycidas' is a pastoral elegy by—",["Milton","Shelley","Gray","Arnold"],0,"Milton-এর বন্ধু Edward King-এর মৃত্যুতে।"],
+["'Areopagitica' is a prose work on—",["Freedom of the press","Religion","Education","Marriage"],0,""],
+["Who is called the Father of English Criticism?",["Dr. Johnson","John Dryden","Matthew Arnold","Pope"],1,""],
+["'All for Love' was written by—",["Shakespeare","John Dryden","Congreve","Otway"],1,""],
+["'The Way of the World' is a—",["Tragedy","Comedy of Manners","Epic","Novel"],1,""],
+["'The Way of the World' was written by—",["William Congreve","Wycherley","Sheridan","Farquhar"],0,""],
+["'The Pilgrim's Progress' was written by—",["John Bunyan","John Locke","Milton","Samuel Butler"],0,""],
+["'Hudibras' was written by—",["Samuel Butler","John Dryden","Swift","Pope"],0,""],
+["'Oroonoko' was written by—",["Aphra Behn","Jane Austen","Fanny Burney","Mary Shelley"],0,""],
+["Which poet wrote 'On His Blindness'?",["Homer","Milton","Spenser","Dryden"],1,""],
+["'Absalom and Achitophel' is a—",["Political satire","Love lyric","Tragedy","Novel"],0,""]]},
+
+{id:"aug",t:"Augustan Age & Age of Sensibility",bn:"অগাস্টান যুগ ও সংবেদনশীলতার যুগ",yr:"1700 – 1798",
+intro:["Augustan Age (1700–1745): Roman সম্রাট Augustus-এর সময়ের মতো 'ক্লাসিক্যাল' আদর্শ। প্রধান কবি Alexander Pope, যিনি Heroic couplet-এর শ্রেষ্ঠ শিল্পী।","এই যুগে ইংরেজি উপন্যাসের জন্ম: Defoe, Richardson, Fielding, Smollett, Sterne। Richardson-এর Pamela-কে অনেকে প্রথম ইংরেজি উপন্যাস বলেন; Fielding-কে Father of the English Novel বলা হয়।","Age of Sensibility (1745–1798) বা Age of Johnson: Dr. Samuel Johnson 1755 সালে প্রথম বড় English Dictionary প্রকাশ করেন।","Thomas Gray-এর Elegy ও Graveyard poetry রোমান্টিক যুগের পূর্বাভাস দেয়।"],
+authors:[["Alexander Pope","The Rape of the Lock (mock-epic); An Essay on Criticism; An Essay on Man; The Dunciad; translation of Homer","Master of the heroic couplet"],["Jonathan Swift","Gulliver's Travels; A Tale of a Tub; The Battle of the Books; A Modest Proposal","Greatest prose satirist"],["Daniel Defoe","Robinson Crusoe (1719); Moll Flanders","Father of English journalism; Crusoe's servant: Friday"],["Samuel Richardson","Pamela; Clarissa","Epistolary novels"],["Joseph Addison & Richard Steele","The Spectator; The Tatler","Periodical essays; Sir Roger de Coverley"],["Dr. Samuel Johnson","A Dictionary of the English Language (1755); Lives of the Poets; Rasselas","Life written by James Boswell"],["Henry Fielding","Tom Jones; Joseph Andrews","Father of the English Novel"],["Oliver Goldsmith","The Vicar of Wakefield; She Stoops to Conquer; The Deserted Village","Novel, comedy, poem"],["Thomas Gray","Elegy Written in a Country Churchyard","Graveyard poet"],["Laurence Sterne","Tristram Shandy","Experimental novel"],["R. B. Sheridan","The Rivals; The School for Scandal","Mrs. Malaprop → 'malapropism'"],["Edmund Burke","Reflections on the Revolution in France","Political thinker"],["Edward Gibbon","The History of the Decline and Fall of the Roman Empire","Historian"],["Adam Smith","The Wealth of Nations (1776)","Father of Economics"],["Rousseau","The Social Contract; Emile","'Man is born free, and everywhere he is in chains'"],["Voltaire","Candide","French satirist"],["Goethe","Faust","German poet"],["Lindley Murray","English Grammar (1795)","Father of English Grammar"],["Herasim Lebedeff","Staged the first Bengali theatre (Kolkata, 1795)","Russian"],["N. B. Halhed","A Grammar of the Bengal Language (1778)","First printed Bengali grammar"],["William Carey","Kathopakathan; Bengali Bible","Fort William College"]],
+quotes:[["A little learning is a dangerous thing.","Pope, An Essay on Criticism"],["To err is human, to forgive divine.","Pope, An Essay on Criticism"],["Fools rush in where angels fear to tread.","Pope, An Essay on Criticism"],["The paths of glory lead but to the grave.","Gray, Elegy"],["Patriotism is the last refuge of a scoundrel.","Dr. Johnson (Boswell's Life)"]],
+qs:[
+["'The Rape of the Lock' is a—",["Tragedy","Mock-epic","Elegy","Romance"],1,""],
+["'The Rape of the Lock' was written by—",["Dryden","Alexander Pope","Swift","Gray"],1,""],
+["'A little learning is a dangerous thing' — who said this?",["Bacon","Pope","Johnson","Milton"],1,""],
+["'To err is human, to forgive divine' is from—",["An Essay on Man","An Essay on Criticism","The Dunciad","Elegy"],1,""],
+["'Gulliver's Travels' was written by—",["Defoe","Jonathan Swift","Fielding","Sterne"],1,""],
+["Lilliput is a country in—",["Utopia","Gulliver's Travels","Robinson Crusoe","Rasselas"],1,""],
+["'Robinson Crusoe' was written by—",["Daniel Defoe","Swift","Richardson","Smollett"],0,""],
+["Who is called the Father of the English Novel?",["Defoe","Richardson","Henry Fielding","Dickens"],2,""],
+["'Pamela' is an epistolary novel by—",["Fielding","Samuel Richardson","Sterne","Goldsmith"],1,""],
+["'The Spectator' was published by—",["Addison and Steele","Johnson and Boswell","Swift and Pope","Lamb and Hazlitt"],0,""],
+["Who compiled the first great English Dictionary (1755)?",["Noah Webster","Dr. Samuel Johnson","Lindley Murray","A. S. Hornby"],1,""],
+["'The Life of Samuel Johnson' was written by—",["Goldsmith","James Boswell","Burke","Gibbon"],1,""],
+["'Elegy Written in a Country Churchyard' is by—",["Thomas Gray","Goldsmith","Collins","Cowper"],0,""],
+["'She Stoops to Conquer' was written by—",["Sheridan","Oliver Goldsmith","Congreve","Fielding"],1,""],
+["'The Wealth of Nations' was written by—",["Adam Smith","Edmund Burke","J. S. Mill","Karl Marx"],0,""],
+["'The Social Contract' was written by—",["Voltaire","Rousseau","Locke","Hobbes"],1,""],
+["'Faust' was written by—",["Goethe","Schiller","Marlowe","Voltaire"],0,""],
+["'Candide' was written by—",["Rousseau","Voltaire","Hugo","Goethe"],1,""],
+["Who staged the first Bengali theatre?",["William Carey","Herasim Lebedeff","Halhed","Derozio"],1,""],
+["'Tom Jones' is a novel by—",["Henry Fielding","Smollett","Defoe","Sterne"],0,""]]},
+
+{id:"roman",t:"The Romantic Period",bn:"রোমান্টিক যুগ",yr:"1798 – 1832",
+intro:["Wordsworth ও Coleridge-এর Lyrical Ballads (1798) দিয়ে শুরু, Walter Scott-এর মৃত্যু ও Reform Bill (1832) পর্যন্ত। মোট ৩৪ বছর।","বৈশিষ্ট্য: প্রকৃতিপ্রেম, কল্পনা, আবেগ, সাধারণ মানুষের ভাষা, অতিপ্রাকৃত ও মধ্যযুগের প্রতি আকর্ষণ।","Wordsworth-এর সংজ্ঞা: কবিতা হলো শক্তিশালী অনুভূতির স্বতঃস্ফূর্ত উচ্ছ্বাস। Lake Poets: Wordsworth, Coleridge, Southey।","দ্বিতীয় প্রজন্মের রোমান্টিক কবিরা (Byron, Shelley, Keats) তরুণ বয়সেই মারা যান।"],
+authors:[["William Wordsworth","Lyrical Ballads; The Prelude; Tintern Abbey; I Wandered Lonely as a Cloud (Daffodils); The Solitary Reaper; Ode: Intimations of Immortality; Lucy poems","Poet of Nature; Poet Laureate 1843"],["S. T. Coleridge","The Rime of the Ancient Mariner; Kubla Khan; Christabel; Biographia Literaria","'Willing suspension of disbelief'"],["P. B. Shelley","Ode to the West Wind; To a Skylark; Prometheus Unbound; Adonais; Ozymandias; A Defence of Poetry","Revolutionary poet; drowned in 1822"],["John Keats","Endymion; Ode to a Nightingale; Ode on a Grecian Urn; To Autumn; Hyperion; La Belle Dame sans Merci","Poet of Beauty; 'negative capability'; died at 25 in Rome"],["Lord Byron","Don Juan; Childe Harold's Pilgrimage","Died in Greece (1824)"],["William Blake","Songs of Innocence; Songs of Experience ('The Tyger', 'The Lamb'); The Marriage of Heaven and Hell","Mystic poet & painter"],["Charles Lamb","Essays of Elia; Tales from Shakespeare (with Mary Lamb)","Prince of English essayists"],["William Hazlitt","Table Talk; The Spirit of the Age","Essayist, critic"],["Thomas De Quincey","Confessions of an English Opium-Eater","Prose writer"],["Jane Austen","Pride and Prejudice; Sense and Sensibility; Emma; Mansfield Park; Persuasion; Northanger Abbey","Novels of manners; Elizabeth Bennet & Mr. Darcy"],["Sir Walter Scott","Waverley; Ivanhoe; Kenilworth","Father of the Historical Novel; Wizard of the North"],["Robert Southey","The Life of Nelson","Lake Poet; Poet Laureate"],["Alexander Pushkin","Eugene Onegin","Father of modern Russian literature"],["H. L. V. Derozio","The Fakeer of Jungheera","Young Bengal movement"]],
+quotes:[["The Child is father of the Man.","Wordsworth, My Heart Leaps Up"],["Water, water, every where, nor any drop to drink.","Coleridge, The Ancient Mariner"],["If Winter comes, can Spring be far behind?","Shelley, Ode to the West Wind"],["Our sweetest songs are those that tell of saddest thought.","Shelley, To a Skylark"],["A thing of beauty is a joy for ever.","Keats, Endymion"],["Beauty is truth, truth beauty.","Keats, Ode on a Grecian Urn"],["Tyger Tyger, burning bright, in the forests of the night.","Blake, The Tyger"]],
+qs:[
+["The Romantic Period began with the publication of—",["The Prelude","Lyrical Ballads","Kubla Khan","Endymion"],1,""],
+["'Lyrical Ballads' was jointly published by—",["Shelley and Keats","Wordsworth and Coleridge","Byron and Shelley","Lamb and Hazlitt"],1,""],
+["Who is called the Poet of Nature?",["Keats","Wordsworth","Shelley","Byron"],1,""],
+["'The Child is father of the Man' — who wrote this?",["Coleridge","Wordsworth","Blake","Keats"],1,""],
+["'The Rime of the Ancient Mariner' is written by—",["Wordsworth","S. T. Coleridge","Southey","Scott"],1,""],
+["In 'The Ancient Mariner' the mariner kills—",["a nightingale","an albatross","a skylark","a raven"],1,""],
+["'If Winter comes, can Spring be far behind?' is the last line of—",["To a Skylark","Ode to the West Wind","Adonais","Ozymandias"],1,""],
+["'Adonais' is an elegy by Shelley on the death of—",["Byron","Keats","Wordsworth","Hallam"],1,""],
+["'A thing of beauty is a joy for ever' is the first line of—",["Hyperion","Endymion","To Autumn","Lamia"],1,""],
+["'Ode to a Nightingale' was written by—",["Shelley","John Keats","Wordsworth","Coleridge"],1,""],
+["'Beauty is truth, truth beauty' occurs in—",["Ode on a Grecian Urn","Ode to Psyche","To Autumn","Endymion"],0,""],
+["'Don Juan' was written by—",["Shelley","Lord Byron","Scott","Keats"],1,""],
+["'The Tyger' is a poem by—",["William Blake","Robert Burns","Wordsworth","Keats"],0,""],
+["'Essays of Elia' was written by—",["Hazlitt","Charles Lamb","De Quincey","Addison"],1,""],
+["'Pride and Prejudice' was written by—",["Charlotte Brontë","Jane Austen","George Eliot","Mary Shelley"],1,""],
+["'Ivanhoe' was written by—",["Walter Scott","Dickens","Fielding","Stevenson"],0,""],
+["Who is called the Father of the Historical Novel?",["Thackeray","Sir Walter Scott","Dumas","Hardy"],1,""],
+["'Willing suspension of disbelief' is a phrase by—",["Wordsworth","Coleridge","Keats","Lamb"],1,""],
+["'Negative capability' is associated with—",["Shelley","Keats","Byron","Blake"],1,""],
+["Which of these is NOT a Lake Poet?",["Wordsworth","Coleridge","Southey","Keats"],3,""]]},
+
+{id:"vict",t:"The Victorian Period",bn:"ভিক্টোরীয় যুগ",yr:"1832 – 1901",
+intro:["Queen Victoria-র শাসনকাল। বিজ্ঞান (Darwin), শিল্পবিপ্লব, সামাজিক সমস্যা ও নৈতিকতা এই যুগের সাহিত্যের মূল বিষয়।","উপন্যাসের স্বর্ণযুগ: Dickens, Thackeray, the Brontës, George Eliot, Hardy।","কবিতায় Tennyson (Poet Laureate 1850), Browning (Dramatic monologue) ও Matthew Arnold।","1848–1860: Pre-Raphaelite আন্দোলন (D. G. Rossetti)। 1880–1901: Aestheticism ('Art for art's sake' — Oscar Wilde, Walter Pater)।"],
+authors:[["Alfred, Lord Tennyson","In Memoriam (for Arthur Hallam); Ulysses; The Lotos-Eaters; Idylls of the King; The Charge of the Light Brigade; Crossing the Bar","Poet Laureate 1850"],["Robert Browning","My Last Duchess; The Ring and the Book; Rabbi Ben Ezra; Pippa Passes","Master of the dramatic monologue"],["Elizabeth Barrett Browning","Sonnets from the Portuguese; Aurora Leigh","'How do I love thee? Let me count the ways'"],["Matthew Arnold","Dover Beach; The Scholar-Gipsy; Thyrsis; Sohrab and Rustum; Culture and Anarchy; Essays in Criticism","Poet & critic; 'sweetness and light'"],["Charles Dickens","Oliver Twist; David Copperfield; A Tale of Two Cities; Great Expectations; Hard Times; A Christmas Carol; The Pickwick Papers; Bleak House","David Copperfield is autobiographical"],["W. M. Thackeray","Vanity Fair (Becky Sharp)","'A novel without a hero'; born in Kolkata"],["Charlotte Brontë","Jane Eyre","Sister of Emily & Anne"],["Emily Brontë","Wuthering Heights","Heathcliff, Catherine"],["George Eliot (Mary Ann Evans)","Middlemarch; The Mill on the Floss; Silas Marner; Adam Bede","Woman writer with a male pen-name"],["Thomas Hardy","Tess of the d'Urbervilles; Far from the Madding Crowd; The Return of the Native; Jude the Obscure; The Mayor of Casterbridge","Novels set in 'Wessex'"],["Edward FitzGerald","The Rubaiyat of Omar Khayyam (translation)","Persian poetry in English"],["John Stuart Mill","On Liberty; Utilitarianism; The Subjection of Women","Philosopher"],["Thomas Carlyle","Sartor Resartus; Heroes and Hero-Worship; The French Revolution","Prose writer"],["R. L. Stevenson","Treasure Island; Dr Jekyll and Mr Hyde; Kidnapped","Adventure stories"],["Oscar Wilde","The Picture of Dorian Gray; The Importance of Being Earnest; The Happy Prince; The Ballad of Reading Gaol; De Profundis","Aestheticism"],["Christina Rossetti","Goblin Market","Pre-Raphaelite poet"],["D. G. Rossetti","The Blessed Damozel","Pre-Raphaelite founder"],["Elizabeth Gaskell","Cranford; North and South; Mary Barton","Social novels"],["Lewis Carroll","Alice's Adventures in Wonderland","Children's fantasy"],["Charles Darwin","On the Origin of Species (1859)","Theory of evolution"],["Cardinal Newman","The Idea of a University; Apologia Pro Vita Sua","Prose"],["Sir Richard Burton","The Arabian Nights (translation)","Explorer"],["Arthur Conan Doyle","Sherlock Holmes stories (A Study in Scarlet)","Detective fiction"],["Samuel Butler (II)","Erewhon; The Way of All Flesh","Satirical novels"],["Charles Dickens' contemporaries abroad","Tolstoy: War and Peace, Anna Karenina · Dostoevsky: Crime and Punishment · Victor Hugo: Les Misérables · Dumas: The Three Musketeers · Mark Twain: Tom Sawyer, Huckleberry Finn · Edgar Allan Poe: The Raven · Hans Christian Andersen: The Ugly Duckling · Karl Marx: Das Kapital","World literature of the age"],["Bengali writers of the age","Bankim Chandra: Rajmohan's Wife (first Indian novel in English) · Peary Chand Mitra: Alaler Gharer Dulal · Ishwar Chandra Vidyasagar · Michael Madhusudan Dutt: The Captive Ladie","Often asked in BCS"]],
+quotes:[["'Tis better to have loved and lost than never to have loved at all.","Tennyson, In Memoriam"],["To strive, to seek, to find, and not to yield.","Tennyson, Ulysses"],["God's in his heaven, all's right with the world!","Browning, Pippa Passes"],["Grow old along with me! The best is yet to be.","Browning, Rabbi Ben Ezra"],["It was the best of times, it was the worst of times.","Dickens, A Tale of Two Cities"]],
+qs:[
+["'In Memoriam' was written by Tennyson in memory of—",["Edward King","Arthur Hallam","Keats","his father"],1,""],
+["'Ulysses' is a poem by—",["Browning","Tennyson","Arnold","Homer"],1,""],
+["Robert Browning is famous for—",["Sonnets","Dramatic monologues","Odes","Ballads"],1,""],
+["'My Last Duchess' is written by—",["Tennyson","Robert Browning","Arnold","Rossetti"],1,""],
+["'Sonnets from the Portuguese' was written by—",["Christina Rossetti","Elizabeth Barrett Browning","George Eliot","Emily Brontë"],1,""],
+["'Dover Beach' is a poem by—",["Matthew Arnold","Tennyson","Hardy","Hopkins"],0,""],
+["'Culture and Anarchy' was written by—",["Carlyle","Matthew Arnold","Ruskin","Mill"],1,""],
+["'Oliver Twist' was written by—",["Thackeray","Charles Dickens","Hardy","Eliot"],1,""],
+["Which novel of Dickens is autobiographical?",["Great Expectations","David Copperfield","Hard Times","Bleak House"],1,""],
+["'A Tale of Two Cities' is set in—",["London and Paris","London and Rome","Paris and Venice","Dublin and London"],0,""],
+["'Vanity Fair' was written by—",["Thackeray","Dickens","Trollope","Meredith"],0,""],
+["'Jane Eyre' was written by—",["Emily Brontë","Charlotte Brontë","Anne Brontë","Jane Austen"],1,""],
+["'Wuthering Heights' was written by—",["Charlotte Brontë","Emily Brontë","George Eliot","Elizabeth Gaskell"],1,""],
+["George Eliot is the pen name of—",["Mary Ann Evans","Charlotte Brontë","Mary Shelley","Elizabeth Gaskell"],0,""],
+["'Tess of the d'Urbervilles' was written by—",["Thomas Hardy","George Eliot","Dickens","Meredith"],0,""],
+["Who translated 'The Rubaiyat of Omar Khayyam' into English?",["Richard Burton","Edward FitzGerald","Tennyson","Arnold"],1,""],
+["'On Liberty' was written by—",["J. S. Mill","Carlyle","Bentham","Locke"],0,""],
+["'Treasure Island' was written by—",["R. L. Stevenson","Conan Doyle","Kipling","Defoe"],0,""],
+["'The Picture of Dorian Gray' was written by—",["Oscar Wilde","Hardy","Stevenson","Wells"],0,""],
+["'On the Origin of Species' was written by—",["Huxley","Charles Darwin","Mill","Newman"],1,""],
+["'War and Peace' was written by—",["Dostoevsky","Leo Tolstoy","Gorky","Chekhov"],1,""],
+["'The Raven' is a poem by—",["Walt Whitman","Edgar Allan Poe","Emily Dickinson","Longfellow"],1,""]]},
+
+{id:"modern",t:"Modern & Post-Modern Periods",bn:"আধুনিক ও উত্তর-আধুনিক যুগ",yr:"1901 – Present",
+intro:["বিশ্বযুদ্ধ, মনস্তত্ত্ব (Freud) ও নগরজীবনের ভাঙন এই যুগের সাহিত্যকে বদলে দেয়। Stream of consciousness, Absurd drama, Postcolonial লেখা এই যুগের বৈশিষ্ট্য।","T. S. Eliot-এর The Waste Land (1922) ও James Joyce-এর Ulysses (1922) আধুনিক সাহিত্যের মাইলফলক।","Booker ও Nobel পুরস্কারপ্রাপ্ত লেখক এবং বাংলাদেশ/উপমহাদেশ সম্পর্কিত ইংরেজি বই BCS-এ নিয়মিত আসে।","লেখকের সংখ্যা অনেক, তাই নিচের তালিকাটি বর্ণানুক্রমে নয়, বিষয় ধরে সাজানো। উপরের Search দিয়ে যেকোনো নাম খুঁজতে পারবে।"],
+authors:[["T. S. Eliot","The Waste Land; The Love Song of J. Alfred Prufrock; Murder in the Cathedral; Four Quartets","Nobel 1948; 'April is the cruellest month'"],["W. B. Yeats","The Second Coming; Sailing to Byzantium; The Lake Isle of Innisfree","Irish; Nobel 1923; wrote the introduction to Tagore's Gitanjali"],["James Joyce","Ulysses; A Portrait of the Artist as a Young Man; Dubliners; Finnegans Wake","Stream of consciousness"],["Virginia Woolf","Mrs Dalloway; To the Lighthouse; A Room of One's Own; Orlando","Stream of consciousness"],["D. H. Lawrence","Sons and Lovers; The Rainbow; Women in Love; Lady Chatterley's Lover","Novelist"],["E. M. Forster","A Passage to India; Howards End; A Room with a View","Dr Aziz, Marabar Caves"],["G. B. Shaw","Arms and the Man; Pygmalion; Man and Superman; Candida; Saint Joan","Nobel 1925; Pygmalion → Eliza Doolittle"],["George Orwell","Animal Farm; Nineteen Eighty-Four","Born in Motihari, India; 'Big Brother'"],["Joseph Conrad","Heart of Darkness; Lord Jim; Nostromo","Polish-born English novelist"],["Rudyard Kipling","The Jungle Book; Kim; 'If—'","Nobel 1907; born in Bombay"],["H. G. Wells","The Time Machine; The Invisible Man; The War of the Worlds","Science fiction"],["Aldous Huxley","Brave New World","Dystopia"],["William Golding","Lord of the Flies","Nobel 1983"],["Samuel Beckett","Waiting for Godot","Theatre of the Absurd; Nobel 1969"],["Harold Pinter","The Birthday Party; The Caretaker","Nobel 2005"],["J. M. Synge","Riders to the Sea; The Playboy of the Western World","Irish dramatist"],["Dylan Thomas","Do Not Go Gentle into That Good Night; Under Milk Wood","Welsh poet"],["W. H. Auden","The Unknown Citizen; Funeral Blues","Poet"],["Ted Hughes","The Hawk in the Rain; Crow","Poet Laureate"],["Seamus Heaney","Digging; Death of a Naturalist","Nobel 1995"],["John Masefield","Sea-Fever","Poet Laureate"],["Somerset Maugham","Of Human Bondage; The Moon and Sixpence","Novelist"],["Doris Lessing","The Grass Is Singing; The Golden Notebook","Nobel 2007"],["Henrik Ibsen","A Doll's House; Ghosts","Norwegian; Father of Modern Drama"],["Ernest Hemingway","The Old Man and the Sea; A Farewell to Arms; For Whom the Bell Tolls","American; Nobel 1954; Santiago"],["Eugene O'Neill","Long Day's Journey into Night; The Emperor Jones","American; Nobel 1936"],["Arthur Miller","Death of a Salesman; The Crucible","American dramatist"],["Robert Frost","Stopping by Woods on a Snowy Evening; The Road Not Taken","American poet"],["Walt Whitman","Leaves of Grass","American poet"],["William Faulkner","The Sound and the Fury","American; Nobel 1949"],["Pearl S. Buck","The Good Earth","Nobel 1938"],["Toni Morrison","Beloved","Nobel 1993"],["Chinua Achebe","Things Fall Apart","Nigerian"],["Wole Soyinka","The Lion and the Jewel","First African Nobel laureate (1986)"],["Gabriel García Márquez","One Hundred Years of Solitude","Magic realism; Nobel 1982"],["Orhan Pamuk","My Name Is Red; Snow","Turkish; Nobel 2006"],["Albert Camus","The Outsider; The Plague","Nobel 1957"],["Jean-Paul Sartre","Being and Nothingness; Nausea","Declined Nobel 1964"],["Franz Kafka","The Metamorphosis; The Trial","Czech-German"],["V. S. Naipaul","A House for Mr Biswas","Nobel 2001"],["Salman Rushdie","Midnight's Children; The Satanic Verses","Booker 1981"],["Arundhati Roy","The God of Small Things","Booker 1997"],["Kiran Desai","The Inheritance of Loss","Booker 2006"],["Aravind Adiga","The White Tiger","Booker 2008"],["Jhumpa Lahiri","Interpreter of Maladies","Pulitzer 2000"],["Amitav Ghosh","The Shadow Lines; The Glass Palace","Indian novelist"],["R. K. Narayan","Swami and Friends; The Guide","Malgudi"],["Monica Ali","Brick Lane","British-Bangladeshi"],["Tahmima Anam","A Golden Age","Bangladesh's Liberation War"],["Kaiser Haq","Published in the Streets of Dhaka","Bangladeshi poet in English"],["Anthony Mascarenhas","The Rape of Bangla Desh","1971 genocide report"],["Bangabandhu Sheikh Mujibur Rahman","The Unfinished Memoirs; The Prison Diaries","Father of the Nation"],["Rabindranath Tagore","Gitanjali (Song Offerings)","Nobel 1913 — first Asian Nobel laureate"],["Amartya Sen","Development as Freedom; Poverty and Famines","Nobel (Economics) 1998"],["Nirad C. Chaudhuri","The Autobiography of an Unknown Indian","Indian prose writer"],["Muhammad Asad","The Road to Mecca","Autobiography"],["Mahatma Gandhi","The Story of My Experiments with Truth","Autobiography"],["Jawaharlal Nehru","The Discovery of India; Glimpses of World History","Prose"],["A. P. J. Abdul Kalam","Wings of Fire","Autobiography"],["Nelson Mandela","Long Walk to Freedom","Autobiography"],["Barack Obama","Dreams from My Father; The Audacity of Hope","Memoir"],["Malala Yousafzai","I Am Malala","Memoir"],["Adolf Hitler","Mein Kampf","Autobiography"],["Stephen Hawking","A Brief History of Time","Science"],["Sigmund Freud","The Interpretation of Dreams","Psychoanalysis"],["Samuel Huntington","The Clash of Civilizations","Political science"],["Francis Fukuyama","The End of History and the Last Man","Political science"],["Winston Churchill","The Second World War","Nobel in Literature 1953"],["J. K. Rowling","Harry Potter series","Fantasy"],["Dan Brown","The Da Vinci Code","Thriller"],["Recent Nobel (Literature)","Bob Dylan 2016 · Kazuo Ishiguro 2017 (The Remains of the Day) · Louise Glück 2020 · Abdulrazak Gurnah 2021 · Annie Ernaux 2022 · Jon Fosse 2023 · Han Kang 2024 (The Vegetarian)","Current affairs"]],
+quotes:[["April is the cruellest month.","T. S. Eliot, The Waste Land"],["All animals are equal, but some animals are more equal than others.","Orwell, Animal Farm"],["Big Brother is watching you.","Orwell, Nineteen Eighty-Four"]],
+qs:[
+["'The Waste Land' was written by—",["W. B. Yeats","T. S. Eliot","Ezra Pound","Auden"],1,""],
+["'April is the cruellest month' is the opening of—",["The Waste Land","Prufrock","Four Quartets","The Second Coming"],0,""],
+["'Murder in the Cathedral' is a play by—",["Shaw","T. S. Eliot","Synge","Yeats"],1,""],
+["Who wrote the introduction to the English Gitanjali?",["T. S. Eliot","W. B. Yeats","Ezra Pound","E. M. Forster"],1,""],
+["'Ulysses' (1922), a novel, was written by—",["Virginia Woolf","James Joyce","D. H. Lawrence","Conrad"],1,""],
+["The 'stream of consciousness' technique is associated with—",["Virginia Woolf","Thomas Hardy","Jane Austen","Dickens"],0,""],
+["'A Passage to India' was written by—",["Kipling","E. M. Forster","Orwell","Naipaul"],1,""],
+["'Arms and the Man' was written by—",["Oscar Wilde","G. B. Shaw","Synge","Galsworthy"],1,""],
+["Eliza Doolittle is a character in—",["Pygmalion","Candida","Saint Joan","Man and Superman"],0,""],
+["'Animal Farm' was written by—",["Aldous Huxley","George Orwell","H. G. Wells","Golding"],1,""],
+["'Heart of Darkness' was written by—",["Joseph Conrad","Kipling","Forster","Achebe"],0,""],
+["'Lord of the Flies' was written by—",["William Golding","Orwell","Huxley","Beckett"],0,""],
+["'Waiting for Godot' belongs to the—",["Comedy of Manners","Theatre of the Absurd","Problem play","Melodrama"],1,""],
+["'The Old Man and the Sea' was written by—",["Steinbeck","Ernest Hemingway","Faulkner","Melville"],1,""],
+["Who is called the Father of Modern Drama?",["Shaw","Henrik Ibsen","Chekhov","Beckett"],1,""],
+["'A Doll's House' was written by—",["Henrik Ibsen","Strindberg","Chekhov","Shaw"],0,""],
+["'Things Fall Apart' was written by—",["Wole Soyinka","Chinua Achebe","Ngugi","Naipaul"],1,""],
+["'One Hundred Years of Solitude' was written by—",["Pablo Neruda","Gabriel García Márquez","Borges","Paz"],1,""],
+["'The God of Small Things' won the Booker Prize for—",["Kiran Desai","Arundhati Roy","Anita Desai","Jhumpa Lahiri"],1,""],
+["'The White Tiger' was written by—",["Aravind Adiga","Amitav Ghosh","Vikram Seth","Rushdie"],0,""],
+["'Midnight's Children' was written by—",["V. S. Naipaul","Salman Rushdie","R. K. Narayan","Amitav Ghosh"],1,""],
+["'The Rape of Bangla Desh' was written by—",["Anthony Mascarenhas","Kaiser Haq","Tahmima Anam","Mark Tully"],0,""],
+["'The Unfinished Memoirs' is the English version of a book by—",["Tajuddin Ahmad","Bangabandhu Sheikh Mujibur Rahman","Jahanara Imam","Syed Waliullah"],1,""],
+["'Brick Lane' was written by—",["Tahmima Anam","Monica Ali","Jhumpa Lahiri","Zadie Smith"],1,""],
+["'Wings of Fire' is the autobiography of—",["Nehru","A. P. J. Abdul Kalam","Gandhi","Mandela"],1,""],
+["'Long Walk to Freedom' is the autobiography of—",["Martin Luther King","Nelson Mandela","Obama","Gandhi"],1,""],
+["'The Clash of Civilizations' was written by—",["Fukuyama","Samuel Huntington","Chomsky","Kissinger"],1,""],
+["'A Brief History of Time' was written by—",["Einstein","Stephen Hawking","Carl Sagan","Newton"],1,""],
+["The first Asian to win the Nobel Prize in Literature was—",["Yasunari Kawabata","Rabindranath Tagore","Naipaul","Pamuk"],1,""],
+["The first African Nobel laureate in Literature was—",["Chinua Achebe","Wole Soyinka","Nadine Gordimer","Naguib Mahfouz"],1,""],
+["Who refused the Nobel Prize in Literature in 1964?",["Albert Camus","Jean-Paul Sartre","Beckett","Pasternak"],1,""],
+["'Stopping by Woods on a Snowy Evening' is by—",["Walt Whitman","Robert Frost","Emily Dickinson","Eliot"],1,""],
+["'Death of a Salesman' was written by—",["Eugene O'Neill","Arthur Miller","Tennessee Williams","Albee"],1,""],
+["'Brave New World' was written by—",["Aldous Huxley","Orwell","Wells","Bradbury"],0,""],
+["Han Kang, the 2024 Nobel laureate in Literature, is from—",["Japan","South Korea","China","Taiwan"],1,""]]},
+
+{id:"titles",t:"Titles of Writers & Key Facts",bn:"এক নজরে সাহিত্যিকদের উপাধি ও গুরুত্বপূর্ণ তথ্য",yr:"Quick Revision",
+intro:["পরীক্ষার আগের রাতে এই অংশটি একবার দেখে নাও — 'Father of ...' ধরনের প্রশ্ন প্রায় প্রতিটি পরীক্ষায় আসে।","কিছু উপাধিতে একাধিক মত আছে (যেমন Father of English Prose: King Alfred / Wycliffe)। এমন ক্ষেত্রে অপশন দেখে সবচেয়ে প্রচলিত উত্তরটি বেছে নাও।"],
+authors:[["Father of English Poetry","Geoffrey Chaucer",""],["Father of English Prose","King Alfred","Wycliffe-কেও কখনো বলা হয়"],["Father of English History","Venerable Bede",""],["Father of English Essay","Francis Bacon",""],["Father of English Novel","Henry Fielding",""],["Father of English Criticism","John Dryden",""],["Father of English Tragedy","Christopher Marlowe",""],["Father of English Grammar","Lindley Murray",""],["Father of Historical Novel","Sir Walter Scott",""],["Father of Modern Drama","Henrik Ibsen",""],["Father of Short Story / Detective story","Edgar Allan Poe","American"],["Father of Economics","Adam Smith",""],["Poet's Poet","Edmund Spenser",""],["Bard of Avon","William Shakespeare",""],["Morning Star of the Reformation","John Wycliffe",""],["Poet of Nature","William Wordsworth",""],["Poet of Beauty","John Keats",""],["Revolutionary / Rebel poet","P. B. Shelley","Also Byron"],["The Blind Poet (English)","John Milton","Homer is the blind poet of Greece"],["Wizard of the North","Sir Walter Scott",""],["The Great Cham of Literature","Dr. Samuel Johnson",""],["Prince of English Essayists","Charles Lamb",""],["Lake Poets","Wordsworth, Coleridge, Southey","Lake District, England"],["University Wits","Marlowe, Kyd, Greene, Peele, Lyly, Nashe, Lodge","Elizabethan dramatists"],["Metaphysical Poets","Donne, Marvell, Herbert, Vaughan, Cowley, Crashaw",""],["Cavalier Poets","Herrick, Lovelace, Suckling, Carew",""],["Graveyard Poets","Thomas Gray, Edward Young, Robert Blair",""],["Pre-Raphaelites","D. G. Rossetti, Christina Rossetti, Morris, Swinburne",""],["First Poet Laureate (official)","John Dryden (1668)",""],["First printed book in English","Recuyell of the Historyes of Troye (Caxton)",""],["First English Dictionary (great)","Dr. Johnson (1755)",""]],
+cols:["উপাধি / বিষয়","লেখক","নোট"],
+qs:[
+["Who is called the Father of English Poetry?",["Milton","Chaucer","Spenser","Wordsworth"],1,""],
+["Who is called the Father of the English Essay?",["Lamb","Francis Bacon","Addison","Hazlitt"],1,""],
+["Who is called the Father of English Criticism?",["John Dryden","Dr. Johnson","Arnold","Coleridge"],0,""],
+["'Wizard of the North' refers to—",["Robert Burns","Sir Walter Scott","Wordsworth","Carlyle"],1,""],
+["Who is known as the Poet of Beauty?",["Shelley","John Keats","Tennyson","Byron"],1,""],
+["The Lake Poets were—",["Keats, Shelley, Byron","Wordsworth, Coleridge, Southey","Donne, Marvell, Herbert","Gray, Young, Blair"],1,""],
+["Who was the first official Poet Laureate of England?",["Ben Jonson","John Dryden","Wordsworth","Tennyson"],1,""],
+["Who is called the Father of English Grammar?",["Dr. Johnson","Lindley Murray","Hornby","Wycliffe"],1,""],
+["'The Great Cham of Literature' is—",["Dryden","Dr. Samuel Johnson","Pope","Swift"],1,""],
+["Who is known as the Father of Modern Drama?",["Shakespeare","Ibsen","Shaw","Marlowe"],1,""],
+["Thomas Gray belongs to the group of—",["Lake poets","Graveyard poets","Cavalier poets","University Wits"],1,""],
+["The 'Prince of English Essayists' is—",["Bacon","Charles Lamb","Addison","Steele"],1,""],
+["Which group did Christina Rossetti belong to?",["Metaphysical","Pre-Raphaelite","Augustan","Cavalier"],1,""],
+["Who is called the Father of the Historical Novel?",["Dickens","Sir Walter Scott","Thackeray","Hardy"],1,""]]},
+
+{id:"figs",t:"Figures of Speech & Literary Terms",bn:"অলংকার ও সাহিত্য পরিভাষা",yr:"Top 35",
+intro:["Figure of speech হলো ভাষাকে আকর্ষণীয় ও শক্তিশালী করার কৌশল। Simile-তে 'like/as' থাকে, Metaphor-এ থাকে না।","Literary terms থেকেও প্রচুর প্রশ্ন আসে: Sonnet, Elegy, Ode, Soliloquy, Catharsis ইত্যাদি।","উদাহরণ মুখস্থ না করে অলংকারটির 'কাজ' বুঝে নাও — তাহলে নতুন উদাহরণ এলেও উত্তর দিতে পারবে।"],
+authors:[["Simile","'like' বা 'as' দিয়ে সরাসরি তুলনা","He is as brave as a lion."],["Metaphor","like/as ছাড়া পরোক্ষ তুলনা","He is a lion in the fight."],["Personification","জড় বস্তুকে মানুষের গুণ দেওয়া","Death lays his icy hand on kings."],["Apostrophe","অনুপস্থিত ব্যক্তি বা বস্তুকে সম্বোধন","O Wind, if Winter comes..."],["Hyperbole","অতিরঞ্জন","The waves rose mountain high."],["Oxymoron","পাশাপাশি দুটি বিপরীত শব্দ","Parting is such sweet sorrow."],["Paradox","আপাত-বিরোধী কিন্তু সত্য কথা","The Child is father of the Man."],["Antithesis","বিপরীত ভাবের পাশাপাশি অবস্থান","To err is human, to forgive divine."],["Alliteration","একই ব্যঞ্জনধ্বনির পুনরাবৃত্তি","Peter Piper picked a peck of pickled peppers."],["Assonance","একই স্বরধ্বনির পুনরাবৃত্তি","How now brown cow."],["Onomatopoeia","শব্দের ধ্বনিতেই অর্থ","buzz, hiss, murmur, tick-tock"],["Metonymy","সম্পর্কিত বস্তুর নাম দিয়ে আসল বস্তু বোঝানো","The pen is mightier than the sword."],["Synecdoche","অংশ দিয়ে সমগ্র বা সমগ্র দিয়ে অংশ","All hands on deck."],["Euphemism","অপ্রিয় কথা নরমভাবে বলা","He passed away."],["Litotes","বিপরীতকে অস্বীকার করে কম করে বলা","He is not a bad singer."],["Irony","বলা কথার উল্টো অর্থ","What a lovely day! (in a storm)"],["Pun","একই শব্দের দুই অর্থ নিয়ে খেলা","An ambassador lies abroad for his country."],["Transferred Epithet","বিশেষণ এক বস্তু থেকে অন্যটিতে সরানো","He spent a sleepless night."],["Climax","ক্রমশ গুরুত্ব বাড়ানো","I came, I saw, I conquered."],["Anticlimax (Bathos)","ক্রমশ গুরুত্ব কমানো","He lost his family, his house and his umbrella."],["Epigram","সংক্ষিপ্ত, তীক্ষ্ণ ও চমকপ্রদ উক্তি","Brevity is the soul of wit."],["Rhetorical Question","উত্তরের প্রত্যাশা ছাড়া প্রশ্ন","Who does not love his country?"],["Allusion","পরিচিত ঘটনা বা চরিত্রের উল্লেখ","He is a Shylock in money matters."],["Sonnet","১৪ লাইনের কবিতা","Petrarchan: octave + sestet · Shakespearean: 3 quatrains + couplet"],["Elegy","মৃত ব্যক্তির জন্য শোকগাথা","Lycidas; Adonais; In Memoriam; Thyrsis"],["Ode","গম্ভীর ও উচ্চ ভাবের সম্বোধনমূলক কবিতা","Ode to the West Wind"],["Epic","বীরত্বপূর্ণ দীর্ঘ আখ্যানকাব্য","Beowulf; Paradise Lost; Iliad"],["Mock-epic","তুচ্ছ বিষয়কে মহাকাব্যের ঢঙে বলা","The Rape of the Lock"],["Ballad","লোকগাথা, গল্প বলে","The Rime of the Ancient Mariner"],["Blank Verse","অন্ত্যমিলহীন iambic pentameter","Paradise Lost; Shakespeare's plays"],["Heroic Couplet","অন্ত্যমিলযুক্ত দুই লাইন iambic pentameter","Chaucer, Dryden, Pope"],["Soliloquy","মঞ্চে একা চরিত্রের মনের কথা জোরে বলা","Hamlet's 'To be, or not to be'"],["Aside","অন্য চরিত্রের অগোচরে দর্শককে বলা কথা","Common in Elizabethan drama"],["Catharsis","ট্র্যাজেডি দেখে করুণা ও ভয়ের পরিশুদ্ধি","Aristotle, Poetics"],["Protagonist / Antagonist","প্রধান চরিত্র / বিরোধী চরিত্র","Hamlet / Claudius"],["Stream of Consciousness","চরিত্রের মনের অবিরাম চিন্তাপ্রবাহ","Joyce, Woolf"],["Epistolary Novel","চিঠির আকারে লেখা উপন্যাস","Pamela; Clarissa"],["Allegory","প্রতীকী গল্প, দ্বিতীয় অর্থ থাকে","The Pilgrim's Progress; Animal Farm"]],
+cols:["পরিভাষা","অর্থ","উদাহরণ"],
+qs:[
+["'He is as brave as a lion' is an example of—",["Metaphor","Simile","Personification","Hyperbole"],1,""],
+["'Parting is such sweet sorrow' contains—",["Oxymoron","Simile","Pun","Litotes"],0,""],
+["'The pen is mightier than the sword' is an example of—",["Synecdoche","Metonymy","Metaphor","Irony"],1,""],
+["'All hands on deck' is an example of—",["Metonymy","Synecdoche","Hyperbole","Simile"],1,""],
+["'He spent a sleepless night' is an example of—",["Transferred epithet","Oxymoron","Paradox","Euphemism"],0,""],
+["'The Child is father of the Man' is an example of—",["Paradox","Antithesis","Simile","Climax"],0,""],
+["'To err is human, to forgive divine' is an example of—",["Antithesis","Oxymoron","Hyperbole","Pun"],0,""],
+["'The waves rose mountain high' is—",["Hyperbole","Litotes","Metaphor","Climax"],0,""],
+["'Buzz', 'hiss' and 'murmur' are examples of—",["Alliteration","Onomatopoeia","Assonance","Pun"],1,""],
+["'He passed away' instead of 'he died' is—",["Euphemism","Irony","Litotes","Hyperbole"],0,""],
+["'I came, I saw, I conquered' is an example of—",["Anticlimax","Climax","Antithesis","Irony"],1,""],
+["'Who does not love his country?' is a—",["Rhetorical question","Exclamation","Apostrophe","Irony"],0,""],
+["A poem of fourteen lines is called a—",["Elegy","Sonnet","Ode","Epic"],1,""],
+["A Petrarchan sonnet is divided into—",["Three quatrains and a couplet","An octave and a sestet","Two sestets","Seven couplets"],1,""],
+["A poem of mourning for the dead is an—",["Ode","Elegy","Epic","Ballad"],1,""],
+["When a character speaks his thoughts aloud alone on stage, it is called—",["aside","monody","soliloquy","negative capability"],2,""],
+["'Blank verse' is—",["Rhymed iambic pentameter","Unrhymed iambic pentameter","Free verse","Ballad metre"],1,""],
+["Catharsis is a term used by Aristotle in—",["Rhetoric","Poetics","Politics","Ethics"],1,""],
+["A comedy does not have—",["a happy ending","a plot","catharsis","comic elements"],2,""],
+["The hero or central character of a literary work is the—",["Villain","Protagonist","Antagonist","Chorus"],1,""],
+["'The Pilgrim's Progress' is an example of—",["Allegory","Epic","Elegy","Ode"],0,""],
+["A novel written in the form of letters is called—",["Picaresque","Epistolary","Gothic","Historical"],1,""],
+["'Peter Piper picked a peck of pickled peppers' illustrates—",["Assonance","Alliteration","Onomatopoeia","Pun"],1,""],
+["Addressing an absent person or a thing as if present is—",["Apostrophe","Personification","Allusion","Irony"],0,""]]}
+];
+
+{
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const bn=n=>String(n).replace(/\d/g,d=>"০১২৩৪৫৬৭৮৯"[d]);
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const ALLQ=SECTIONS.flatMap((s,si)=>s.qs.map(q=>({q:q[0],o:q[1],a:q[2],e:q[3],s:si})));
+$("#stS").textContent=bn(SECTIONS.length);$("#stQ").textContent=bn(ALLQ.length)+"+";$("#stA").textContent=bn(SECTIONS.reduce((n,s)=>n+s.authors.length,0))+"+";
+
+/* views */
+const VIEWS=["study","exam","history"];
+function show(v){if(!VIEWS.includes(v))v="study";
+  if(exam&&!exam.done&&v!=="exam"){toast("পরীক্ষা চলছে — আগে জমা দাও");v="exam"}
+  VIEWS.forEach(x=>$("#v-"+x).hidden=x!==v);
+  document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current",b.dataset.view===v));
+  if(v==="history")renderHist();
+  if(location.hash!=="#"+v)history.replaceState(null,"","#"+v);}
+document.querySelectorAll("[data-view],[data-go]").forEach(b=>b.onclick=()=>{show(b.dataset.view||b.dataset.go);$("main").scrollIntoView({behavior:"smooth"})});
+addEventListener("hashchange",()=>show(location.hash.slice(1)));
+
+/* study */
+let cur=store.get("lm_sec",0);if(!SECTIONS[cur])cur=0;
+$("#side").innerHTML=SECTIONS.map((s,i)=>`<button data-i="${i}"><i>${bn(i+1)}</i><span>${esc(s.t)}<small>${esc(s.bn)}</small></span></button>`).join("");
+$("#side").onclick=e=>{const b=e.target.closest("button");if(b){cur=+b.dataset.i;store.set("lm_sec",cur);renderSec();if(innerWidth<980)$("#secBox").scrollIntoView({behavior:"smooth"})}};
+function hl(t,q){t=esc(t);if(!q)return t;const r=new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi");return t.replace(r,"<mark>$1</mark>")}
+function renderSec(q=""){
+  const s=SECTIONS[cur],cols=s.cols||["লেখক","প্রধান রচনা","বিশেষ তথ্য"];
+  document.querySelectorAll("#side button").forEach((b,i)=>b.setAttribute("aria-current",i===cur));
+  $("#secBox").innerHTML=`<article class="sec">
+   <div class="sechead"><div><span class="yr">${esc(s.yr)}</span><h2>${esc(s.t)}</h2><p>${esc(s.bn)}</p></div>
+   <button class="btn g" data-quiz="${cur}">📝 এই অধ্যায়ের পরীক্ষা (${bn(s.qs.length)})</button></div>
+   <ul class="intro">${s.intro.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+   <div class="search"><input id="q" type="search" placeholder="এই অধ্যায়ে খুঁজুন… (নাম, বই, তথ্য)" value="${esc(q)}" aria-label="Search"><small style="color:var(--mut)" id="cnt"></small></div>
+   <div><table class="stack"><thead><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead><tbody id="tb"></tbody></table></div>
+   ${s.quotes?`<h3 class="h3">বিখ্যাত উক্তি</h3><div class="quotes">${s.quotes.map(x=>`<figure><blockquote>“${esc(x[0])}”</blockquote><figcaption>— ${esc(x[1])}</figcaption></figure>`).join("")}</div>`:""}
+   <div class="cta"><div><b style="font-size:18px">পড়া শেষ? এবার নিজেকে যাচাই করো।</b><div style="opacity:.85;font-size:14px">${bn(s.qs.length)}টি প্রশ্ন · প্রতি প্রশ্নে ৩০ সেকেন্ড</div></div><div class="row">${cur>0?`<button class="btn alt" data-nav="-1">← আগের অধ্যায়</button>`:""}${cur<SECTIONS.length-1?`<button class="btn alt" data-nav="1">পরের অধ্যায় →</button>`:""}<button class="btn" data-quiz="${cur}">পরীক্ষা দাও</button></div></div>
+  </article>`;
+  const fill=()=>{const v=$("#q").value.trim().toLowerCase();const rows=s.authors.filter(r=>!v||r.join(" ").toLowerCase().includes(v));
+    $("#tb").innerHTML=rows.map(r=>`<tr>${r.map(c=>`<td>${hl(c,v)}</td>`).join("")}</tr>`).join("")||`<tr><td colspan="3" class="empty">কিছু পাওয়া যায়নি।</td></tr>`;
+    $("#cnt").textContent=bn(rows.length)+"টি তথ্য"};
+  fill();$("#q").oninput=fill;
+  $("#secBox").querySelectorAll("[data-quiz]").forEach(b=>b.onclick=()=>{$("#selSec").value=b.dataset.quiz;cfg.sec=b.dataset.quiz;cfg.n="all";paintSetup();show("exam");$("main").scrollIntoView({behavior:"smooth"})});
+  $("#secBox").querySelectorAll("[data-nav]").forEach(b=>b.onclick=()=>{cur+=+b.dataset.nav;store.set("lm_sec",cur);renderSec();$("#secBox").scrollIntoView({behavior:"smooth"})});
+}
+renderSec();
+
+/* exam setup */
+const cfg=Object.assign({sec:"all",n:20,t:30,neg:0},store.get("lm_cfg",{}));
+$("#selSec").innerHTML=`<option value="all">🌐 সব অধ্যায় মিলিয়ে (মডেল টেস্ট)</option>`+SECTIONS.map((s,i)=>`<option value="${i}">${bn(i+1)}. ${esc(s.t)}</option>`).join("");
+const chips=(el,opts,key)=>{$(el).innerHTML=opts.map(([v,l])=>`<button data-v="${v}" aria-pressed="${String(cfg[key])===String(v)}">${l}</button>`).join("");
+  $(el).onclick=e=>{const b=e.target.closest("button");if(!b)return;cfg[key]=isNaN(b.dataset.v)?b.dataset.v:+b.dataset.v;paintSetup()}};
+function pool(){return cfg.sec==="all"?ALLQ:ALLQ.filter(q=>q.s===+cfg.sec)}
+function paintSetup(){$("#selSec").value=cfg.sec;const P=pool().length;
+  chips("#chN",[[10,"১০"],[20,"২০"],[30,"৩০"],[50,"৫০"],["all","সবগুলো"]],"n");
+  chips("#chT",[[20,"২০ সে."],[30,"৩০ সে."],[36,"৩৬ সে. (BCS)"],[60,"১ মিনিট"]],"t");
+  chips("#chNeg",[[0,"নেই"],[0.25,"০.২৫"],[0.5,"০.৫০ (BCS)"]],"neg");
+  const n=cfg.n==="all"?P:Math.min(cfg.n,P);
+  $("#secCount").textContent=`এই অংশে মোট ${bn(P)}টি প্রশ্ন আছে`;
+  $("#tInfo").textContent=`মোট সময়: ${bn(Math.ceil(n*cfg.t/60))} মিনিট · ${bn(n)}টি প্রশ্ন`;store.set("lm_cfg",cfg)}
+$("#selSec").onchange=e=>{cfg.sec=e.target.value;paintSetup()};
+paintSetup();
+
+/* exam engine */
+let exam=null,tick=null;
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function startExam(list){
+  exam={qs:list.map(q=>{const idx=shuffle([0,1,2,3]);return{...q,o:idx.map(i=>q.o[i]),a:idx.indexOf(q.a)}}),ans:{},flag:{},i:0,total:list.length*cfg.t,start:Date.now(),neg:cfg.neg,label:cfg.sec==="all"?"মডেল টেস্ট (সব অধ্যায়)":SECTIONS[+cfg.sec].t,done:false};
+  $("#setup").hidden=true;$("#resBox").hidden=true;$("#examBox").hidden=false;
+  clearInterval(tick);tick=setInterval(updClock,250);updClock();renderQ();$("main").scrollIntoView({behavior:"smooth"})}
+$("#begin").onclick=()=>{const P=shuffle(pool());startExam(P.slice(0,cfg.n==="all"?P.length:cfg.n))};
+function left(){return Math.max(0,exam.total-Math.floor((Date.now()-exam.start)/1000))}
+const mmss=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
+function updClock(){if(!exam||exam.done)return;const l=left();$("#clock").textContent=bn(mmss(l));
+  $("#arc").style.strokeDashoffset=326.7*(1-l/exam.total);$("#arc").style.stroke=l<exam.total*.2?"var(--bad)":l<exam.total*.5?"var(--gold)":"var(--leaf)";
+  $("#ring").classList.toggle("low",l<=30);if(l<=0){finish(true)}}
+function renderQ(){const q=exam.qs[exam.i],n=exam.qs.length;
+  $("#qNo").textContent=`প্রশ্ন ${bn(exam.i+1)} / ${bn(n)}`;$("#qSec").textContent=SECTIONS[q.s].t;
+  $("#progBar").style.width=(exam.i+1)/n*100+"%";$("#qText").textContent=q.q;
+  $("#opts").innerHTML=q.o.map((o,k)=>`<button class="opt" data-k="${k}" aria-pressed="${exam.ans[exam.i]===k}"><b>${"কখগঘ"[k]}</b><span>${esc(o)}</span></button>`).join("");
+  $("#prev").disabled=exam.i===0;$("#next").textContent=exam.i===n-1?"শেষ প্রশ্ন ✓":"পরের →";
+  $("#flag").textContent=exam.flag[exam.i]?"⚑ চিহ্ন সরাও":"⚑ পরে দেখবো";
+  const a=Object.keys(exam.ans).length;$("#ansCount").textContent=`উত্তর: ${bn(a)} / ${bn(n)}`;
+  $("#grid").innerHTML=exam.qs.map((_,k)=>`<button data-j="${k}" class="${exam.ans[k]!==undefined?"a":""} ${exam.flag[k]?"f":""} ${k===exam.i?"c":""}" aria-label="প্রশ্ন ${k+1}">${bn(k+1)}</button>`).join("")}
+function pick(k){if(exam.ans[exam.i]===k)delete exam.ans[exam.i];else exam.ans[exam.i]=k;renderQ();
+  if(exam.ans[exam.i]!==undefined&&exam.i<exam.qs.length-1)setTimeout(()=>{if(!exam.done){exam.i++;renderQ()}},350)}
+$("#opts").onclick=e=>{const b=e.target.closest(".opt");if(b)pick(+b.dataset.k)};
+$("#grid").onclick=e=>{const b=e.target.closest("button");if(b){exam.i=+b.dataset.j;renderQ()}};
+$("#prev").onclick=()=>{if(exam.i>0){exam.i--;renderQ()}};
+$("#next").onclick=()=>{if(exam.i<exam.qs.length-1){exam.i++;renderQ()}else askSubmit()};
+$("#flag").onclick=()=>{exam.flag[exam.i]=!exam.flag[exam.i];renderQ()};
+$("#submit").onclick=askSubmit;
+addEventListener("keydown",e=>{if(!exam||exam.done||$("#examBox").hidden||$("#dlg").classList.contains("on")||e.target.matches("input,select"))return;
+  const m={"1":0,"2":1,"3":2,"4":3,a:0,b:1,c:2,d:3}[e.key.toLowerCase()];if(m!==undefined)pick(m);
+  if(e.key==="ArrowRight")$("#next").click();if(e.key==="ArrowLeft")$("#prev").click()});
+function ask(t,x,yes){$("#dTitle").textContent=t;$("#dText").textContent=x;$("#dlg").classList.add("on");$("#dYes").focus();
+  $("#dYes").onclick=()=>{$("#dlg").classList.remove("on");yes()};$("#dNo").onclick=()=>$("#dlg").classList.remove("on")}
+function askSubmit(){const n=exam.qs.length,a=Object.keys(exam.ans).length;
+  ask("পরীক্ষা জমা দেবে?",a<n?`${bn(n-a)}টি প্রশ্নের উত্তর এখনো বাকি আছে। জমা দিলে আর পরিবর্তন করা যাবে না।`:"সব প্রশ্নের উত্তর দেওয়া হয়েছে। জমা দিতে চাও?",()=>finish(false))}
+
+function finish(auto){if(exam.done)return;exam.done=true;clearInterval(tick);
+  const used=Math.min(exam.total,Math.round((Date.now()-exam.start)/1000));let c=0,w=0;
+  exam.qs.forEach((q,k)=>{if(exam.ans[k]===undefined)return;exam.ans[k]===q.a?c++:w++});
+  const n=exam.qs.length,sk=n-c-w,marks=Math.max(0,c-w*exam.neg),pct=Math.round(marks/n*100);
+  const msg=pct>=80?["অসাধারণ! 🌟","তুমি এই অংশে দারুণ প্রস্তুত।"]:pct>=60?["খুব ভালো! 👏","আরেকটু রিভিশন দিলেই সেরা।"]:pct>=40?["ভালো চেষ্টা 💪","ভুলগুলো দেখে নিয়ে আবার চেষ্টা করো।"]:["হাল ছেড়ো না 📚","অধ্যায়টি আবার পড়ে পরীক্ষা দাও।"];
+  const h=store.get("lm_hist",[]);h.unshift({d:Date.now(),l:exam.label,n,c,w,m:marks,p:pct,u:used});store.set("lm_hist",h.slice(0,50));
+  $("#examBox").hidden=true;const R=$("#resBox");R.hidden=false;
+  R.innerHTML=`<div class="res"><div class="score">
+     ${auto?`<div style="background:#ffffff22;border-radius:10px;padding:6px;margin-bottom:10px">⏰ সময় শেষ — স্বয়ংক্রিয়ভাবে জমা হয়েছে</div>`:""}
+     <div style="font-weight:600">${esc(exam.label)}</div>
+     <div class="big">${bn(+marks.toFixed(2))}<span style="font-size:.45em;color:#fff">/${bn(n)}</span></div>
+     <div style="font:700 20px 'Anek Bangla'">${msg[0]}</div><div style="opacity:.85">${msg[1]}</div>
+     <div class="kv"><div><b>${bn(pct)}%</b><small>প্রাপ্ত নম্বর</small></div><div><b>${bn(mmss(used))}</b><small>সময় লেগেছে (মোট ${bn(mmss(exam.total))})</small></div>
+     <div><b style="color:#7dffa1">${bn(c)}</b><small>সঠিক</small></div><div><b style="color:#ff9b93">${bn(w)}</b><small>ভুল${exam.neg?` (−${bn(+(w*exam.neg).toFixed(2))})`:""}</small></div>
+     <div><b>${bn(sk)}</b><small>উত্তর দেওয়া হয়নি</small></div><div><b>${bn(Math.round(used/Math.max(1,c+w)))} সে.</b><small>গড় সময়/প্রশ্ন</small></div></div>
+     <div class="row" style="margin-top:16px;justify-content:center"><button class="btn" id="again">🔁 আবার পরীক্ষা</button>${w+sk?`<button class="btn alt" id="wrongOnly">ভুলগুলো আবার</button>`:""}<button class="btn alt" id="toSetup">⚙ নতুন সেটিংস</button></div>
+   </div><div><div class="chips filt" id="rf"><button data-f="all" aria-pressed="true">সব (${bn(n)})</button><button data-f="no" aria-pressed="false">ভুল (${bn(w)})</button><button data-f="sk" aria-pressed="false">বাদ (${bn(sk)})</button><button data-f="ok" aria-pressed="false">সঠিক (${bn(c)})</button></div><div class="rev" id="rev"></div></div></div>`;
+  const ex=exam,paintRev=f=>{$("#rev").innerHTML=ex.qs.map((q,k)=>{const a=ex.ans[k],st=a===undefined?"sk":a===q.a?"ok":"no";if(f!=="all"&&f!==st)return"";
+    return`<div class="rv ${st}"><p>${bn(k+1)}. ${esc(q.q)}</p><ul>${q.o.map((o,j)=>`<li class="${j===q.a?"r":j===a?"w":""}">${"কখগঘ"[j]}. ${esc(o)}${j===q.a?" ✓":""}</li>`).join("")}</ul>${st==="sk"?`<em>উত্তর দাওনি।</em>`:""}${q.e?`<em>💡 ${esc(q.e)}</em>`:""}</div>`}).join("")||`<p class="empty">এখানে কিছু নেই।</p>`};
+  paintRev("all");$("#rf").onclick=e=>{const b=e.target.closest("button");if(!b)return;$("#rf").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));paintRev(b.dataset.f)};
+  $("#again").onclick=()=>startExam(shuffle(ex.qs.map(q=>ALLQ.find(z=>z.q===q.q))));
+  if($("#wrongOnly"))$("#wrongOnly").onclick=()=>startExam(ex.qs.filter((q,k)=>ex.ans[k]!==q.a).map(q=>ALLQ.find(z=>z.q===q.q)));
+  $("#toSetup").onclick=()=>{R.hidden=true;$("#setup").hidden=false;exam=null};
+  R.scrollIntoView({behavior:"smooth"})}
+
+/* history */
+function renderHist(){const h=store.get("lm_hist",[]);
+  if(!h.length){$("#histBox").innerHTML=`<p class="empty">এখনো কোনো পরীক্ষা দাওনি। “পরীক্ষা” ট্যাবে গিয়ে শুরু করো।</p>`;return}
+  const best=Math.max(...h.map(x=>x.p)),avg=Math.round(h.reduce((s,x)=>s+x.p,0)/h.length);
+  $("#histBox").innerHTML=`<div class="stats" style="max-width:560px"><div style="background:var(--soft)"><b>${bn(h.length)}</b><small style="color:var(--mut)">মোট পরীক্ষা</small></div><div style="background:var(--soft)"><b>${bn(best)}%</b><small style="color:var(--mut)">সেরা স্কোর</small></div><div style="background:var(--soft)"><b>${bn(avg)}%</b><small style="color:var(--mut)">গড় স্কোর</small></div></div>
+  <table class="stack hist"><thead><tr><th>তারিখ</th><th>অধ্যায়</th><th>নম্বর</th><th>%</th><th>সময়</th></tr></thead><tbody>${h.map(x=>`<tr><td>${esc(new Date(x.d).toLocaleString("bn-BD",{dateStyle:"medium",timeStyle:"short"}))}</td><td>${esc(x.l)}</td><td>${bn(+(+x.m).toFixed(2))}/${bn(x.n)}</td><td>${bn(x.p)}%</td><td>${bn(mmss(x.u))}</td></tr>`).join("")}</tbody></table>
+  <button class="btn alt" id="clr" style="margin-top:14px;color:var(--ink)">🗑 ইতিহাস মুছে ফেলো</button>`;
+  $("#clr").onclick=()=>ask("ইতিহাস মুছবে?","সব আগের ফলাফল মুছে যাবে।",()=>{store.set("lm_hist",[]);renderHist()})}
+
+let tt;function toast(t){$("#toast").textContent=t;$("#toast").classList.add("on");clearTimeout(tt);tt=setTimeout(()=>$("#toast").classList.remove("on"),2200)}
+show(location.hash.slice(1)||"study");
+}
+</script>
+</body>
+</html>
