@@ -19,8 +19,8 @@
 Made by **তারিকুল ইসলাম (সুমন)** — MSc Mathematics · [TIS Academy](https://www.youtube.com/@tis.academy24)
 
 ## Features
-- **12 partitions** — one per book / note: TIS core notes, Barron's GRE 333 Words (with Bangla meanings), Word Smart (735 words), Objective English for Competitive Examinations (Thorpe), A Handbook on English Literature, Miracle BCS Preli English Literature, 525 MCQ on English Literature, A Gateway to English Literature, English Literature Suggestion (Primary), Learner's Publication Basic Note, a handwritten 44th BCS note, and Alokbortika
-- **5,300+ MCQ** with answers; 900+ previous exam questions show the **exam name and year** (BCS, university admission, bank and other recruitment exams)
+- **15 partitions in two subjects** — 🧮 **Math**: R. S. Aggarwal Quantitative Aptitude (3,400+ MCQ with exam name & year), Math formulas & concepts (Bangla), Bank written practice problems. 📖 **English**: TIS core notes, Barron's GRE 333 Words (with Bangla meanings), Word Smart (735 words), Objective English for Competitive Examinations (Thorpe), A Handbook on English Literature, Miracle BCS Preli English Literature, 525 MCQ on English Literature, A Gateway to English Literature, English Literature Suggestion (Primary), Learner's Publication Basic Note, a handwritten 44th BCS note, and Alokbortika
+- **8,800+ MCQ** with answers; 900+ previous exam questions show the **exam name and year** (BCS, university admission, bank and other recruitment exams)
 - **1,400+ note rows**: authors, titles, works, characters, quotations, Nobel winners, Bangla translations, similar titles
 - Search across every book at once; per-book question bank with filters (BCS / admission / bank / other jobs / only previous exams)
 - Exam settings: any book or all books together, chapter, question type, question count (up to a 200-question BCS-style test), time per question, negative marking
