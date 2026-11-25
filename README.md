@@ -15,9 +15,11 @@
 Made by **তারিকুল ইসলাম (সুমন)** — MSc Mathematics · [TIS Academy](https://www.youtube.com/@tis.academy24)
 
 ## Features
-- 13 chapter-wise sections: Old English → Post-Modern, Shakespeare, titles of writers, figures of speech
-- Notes in Bangla with author/work tables, famous quotations and in-section search
-- 239 MCQ questions with exam settings: chapter or full model test, question count, time per question, negative marking
+- **9 partitions** — one per book / note: TIS core notes, A Handbook on English Literature, Miracle BCS Preli English Literature, 525 MCQ on English Literature, A Gateway to English Literature, English Literature Suggestion (Primary), Learner's Publication Basic Note, a handwritten 44th BCS note, and Alokbortika
+- **2,100+ MCQ** with answers; 900+ previous exam questions show the **exam name and year** (BCS, university admission, bank and other recruitment exams)
+- **1,400+ note rows**: authors, titles, works, characters, quotations, Nobel winners, Bangla translations, similar titles
+- Search across every book at once; per-book question bank with filters (BCS / admission / bank / other jobs / only previous exams)
+- Exam settings: any book or all books together, chapter, question type, question count (up to a 200-question BCS-style test), time per question, negative marking
 - Live countdown timer, question navigator, "mark for later", auto-submit when time ends
 - Instant result: marks, %, time taken, correct/wrong/skipped, full answer review, "retry wrong ones"
 - Result history saved in the browser
